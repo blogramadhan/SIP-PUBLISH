@@ -625,7 +625,7 @@ with menu_purchasing_2:
 
         st.divider()
 
-        DARING_radio_1, DARING_radio_2, DARING_radio_3 = st.columns((1,1,8))
+        DARING_radio_1, DARING_radio_2, DARING_radio_3 = st.columns((2,2,6))
         with DARING_radio_1:
             status_verifikasi = st.radio("**Status Verifikasi Transaksi**", ["verified", "unverified", "Gabungan"])
         with DARING_radio_2:
