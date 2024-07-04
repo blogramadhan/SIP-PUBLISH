@@ -633,7 +633,6 @@ with menu_purchasing_2:
         st.write(f"Anda memilih : **{status_verifikasi}** dan **{status_ppmse}**")
 
         ### Query Toko Daring
-        DARING_radio_1, DARING_radio_2 = st.columns((1,1,8))
         if status_verifikasi == "Gabungan":
             df_BELA_filter = con.execute(f"SELECT * FROM df_BELA WHERE nama_satker IS NOT NULL").df()
         else:
