@@ -659,7 +659,7 @@ with menu_purchasing_2:
 
         with st.container(border=True):
 
-            st.subheader("Berdasarkan Perangkat Daerah (10 Besar)")
+            st.subheader("Berdasarkan Perangkat Daerah (10 Besar) OK")
 
             grafik_bela_pd_11, grafik_bela_pd_12 = st.tabs(["| Jumlah Transaksi Perangkat Daerah |", "| Nilai Transaksi Perangkat Daerah |"])
 
