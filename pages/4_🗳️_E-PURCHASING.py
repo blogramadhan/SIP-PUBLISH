@@ -625,10 +625,15 @@ with menu_purchasing_2:
 
         st.divider()
 
-        status_verifikasi = st.radio("**Status Verifikasi Transaksi**", ["verified", "unverified", "Gabungan"])
-        st.write(f"Anda memilih : **{status_verifikasi}**")
+        DARING_radio_1, DARING_radio_2 = st.columns((1,1,8))
+        with DARING_radio_1:
+            status_verifikasi = st.radio("**Status Verifikasi Transaksi**", ["verified", "unverified", "Gabungan"])
+        with DARING_radio_2:
+            status_ppmse = st.radio("**Status Konfirmasi PPMSE**", ["gagal", "selesai"])
+        st.write(f"Anda memilih : **{status_verifikasi}** dan **{status_ppmse}**")
 
         ### Query Toko Daring
+        DARING_radio_1, DARING_radio_2 = st.columns((1,1,8))
         if status_verifikasi == "Gabungan":
             df_BELA_filter = con.execute(f"SELECT * FROM df_BELA WHERE nama_satker IS NOT NULL").df()
         else:
