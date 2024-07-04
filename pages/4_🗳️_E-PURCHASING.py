@@ -633,10 +633,19 @@ with menu_purchasing_2:
         st.write(f"Anda memilih : **{status_verifikasi}** dan **{status_ppmse}**")
 
         ### Query Toko Daring
-        if status_verifikasi == "Gabungan":
-            df_BELA_filter = con.execute(f"SELECT * FROM df_BELA WHERE nama_satker IS NOT NULL").df()
-        else:
-            df_BELA_filter = con.execute(f"SELECT * FROM df_BELA WHERE nama_satker IS NOT NULL AND status_verif = '{status_verifikasi}'").df()
+        if (status_verifikasi == "Gabungan"):
+            if status_ppmse == "selesai":
+                df_BELA_filter = con.execute(f"SELECT * FROM df_BELA WHERE nama_satker IS NOT NULL AND (status_konfirmasi_ppmse = '{status_ppmse}' OR status_ppmse IS NULL)").df()
+            else {
+                df_BELA_filter = con.execute(f"SELECT * FROM df_BELA WHERE nama_satker IS NOT NULL AND status_konfirmasi_ppmse = '{status_ppmse}'").df()
+            }
+        else {
+            if status_ppmse == "selesai":
+                df_BELA_filter = con.execute(f"SELECT * FROM df_BELA WHERE nama_satker IS NOT NULL AND status_verifikasi = '{status_verifikasi}' AND (status_konfirmasi_ppmse = '{status_ppmse}' OR status_ppmse IS NULL)").df()
+            else {
+                df_BELA_filter = con.execute(f"SELECT * FROM df_BELA WHERE nama_satker IS NOT NULL AND status_verifikasi = '{status_verifikasi}' status_konfirmasi_ppmse = '{status_ppmse}'").df()
+            }
+        }
 
         jumlah_trx_daring = df_BELA_filter['order_id'].unique().shape[0]
         nilai_trx_daring = df_BELA_filter['valuasi'].sum()
