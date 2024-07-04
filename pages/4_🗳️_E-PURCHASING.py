@@ -635,12 +635,12 @@ with menu_purchasing_2:
         ### Query Toko Daring
         if (status_verifikasi == "Gabungan"):
             if status_ppmse == "selesai":
-                df_BELA_filter = con.execute(f"SELECT * FROM df_BELA WHERE LENGTH(nama_satker) > 1 AND (status_konfirmasi_ppmse = '{status_ppmse}' OR status_konfirmasi_ppmse IS NULL)").df()
+                df_BELA_filter = con.execute(f"SELECT * FROM df_BELA WHERE LENGTH(nama_satker) > 1 AND (status_konfirmasi_ppmse = '{status_ppmse}' OR LENGTH(status_konfirmasi_ppmse) < 1)").df()
             else:
                 df_BELA_filter = con.execute(f"SELECT * FROM df_BELA WHERE LENGTH(nama_satker) > 1 AND status_konfirmasi_ppmse = '{status_ppmse}'").df()
         else:
             if status_ppmse == "selesai":
-                df_BELA_filter = con.execute(f"SELECT * FROM df_BELA WHERE LENGTH(nama_satker) > 1 AND status_verif = '{status_verifikasi}' AND (status_konfirmasi_ppmse = '{status_ppmse}' OR status_konfirmasi_ppmse IS NULL)").df()
+                df_BELA_filter = con.execute(f"SELECT * FROM df_BELA WHERE LENGTH(nama_satker) > 1 AND status_verif = '{status_verifikasi}' AND (status_konfirmasi_ppmse = '{status_ppmse}' OR LENGTH(status_konfirmasi_ppmse) < 1)").df()
             else:
                 df_BELA_filter = con.execute(f"SELECT * FROM df_BELA WHERE LENGTH(nama_satker) > 1 AND status_verif = '{status_verifikasi}' AND status_konfirmasi_ppmse = '{status_ppmse}'").df()
         
