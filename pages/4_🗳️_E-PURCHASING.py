@@ -640,9 +640,9 @@ with menu_purchasing_2:
                 df_BELA_filter = con.execute(f"SELECT * FROM df_BELA WHERE nama_satker IS NOT NULL AND status_konfirmasi_ppmse IN ('{status_ppmse}')").df()
         else:
             if status_ppmse == "selesai":
-                df_BELA_filter = con.execute(f"SELECT * FROM df_BELA WHERE nama_satker IS NOT NULL AND status_verifikasi = '{status_verifikasi}' AND (status_konfirmasi_ppmse IN ('{status_ppmse}') OR status_konfirmasi_ppmse IS NULL)").df()
+                df_BELA_filter = con.execute(f"SELECT * FROM df_BELA WHERE nama_satker IS NOT NULL AND status_verifikasi IN ('{status_verifikasi}') AND (status_konfirmasi_ppmse IN ('{status_ppmse}') OR status_konfirmasi_ppmse IS NULL)").df()
             else:
-                df_BELA_filter = con.execute(f"SELECT * FROM df_BELA WHERE nama_satker IS NOT NULL AND status_verifikasi = '{status_verifikasi}' AND status_konfirmasi_ppmse IN ('{status_ppmse}')").df()
+                df_BELA_filter = con.execute(f"SELECT * FROM df_BELA WHERE nama_satker IS NOT NULL AND status_verifikasi IN ('{status_verifikasi}') AND status_konfirmasi_ppmse IN ('{status_ppmse}')").df()
         
         jumlah_trx_daring = df_BELA_filter['order_id'].unique().shape[0]
         nilai_trx_daring = df_BELA_filter['valuasi'].sum()
