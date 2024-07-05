@@ -113,10 +113,13 @@ with menu_purchasing_1:
 
             KATALOG_radio_1, KATALOG_radio_2, KATALOG_radio_3, KATALOG_radio_4 = st.columns((1,1,2,6))
             with KATALOG_radio_1:
-                jenis_katalog = st.radio("**Jenis Katalog**", ["Lokal", "Nasional", "Sektoral", "Gabungan"])
+                jenis_katalog_array = df_ECAT_OK['jenis_katalog'].unique()
+                jenis_katalog_array_ok = np.append(jenis_katalog_array, "Gabungan")
+                jenis_katalog = st.radio("**Jenis Katalog**", jenis_katalog_array_ok)
+                # jenis_katalog = st.radio("**Jenis Katalog**", ["Lokal", "Nasional", "Sektoral", "Gabungan"])
             with KATALOG_radio_2:
-                #nama_sumber_dana = st.radio("**Sumber Dana**", df_ECAT_OK['nama_sumber_dana'].unique())    
-                nama_sumber_dana = st.radio("**Sumber Dana**", ["APBD", "APBDP", "APBN", "APBNP", "BLUD", "BLU", "BUMN", "BUMD", "Gabungan"])
+                nama_sumber_dana = st.radio("**Sumber Dana**", df_ECAT_OK['nama_sumber_dana'].unique())    
+                # nama_sumber_dana = st.radio("**Sumber Dana**", ["APBD", "APBDP", "APBN", "APBNP", "BLUD", "BLU", "BUMN", "BUMD", "Gabungan"])
             with KATALOG_radio_3:
                 status_paket = st.radio("**Status Paket**", ["Paket Selesai", "Paket Proses", "Gabungan"])
             st.write(f"Anda memilih : **{status_paket}** dan **{jenis_katalog}** dan **{nama_sumber_dana}**")
