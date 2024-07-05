@@ -116,15 +116,18 @@ with menu_purchasing_1:
                 jenis_katalog = st.radio("**Jenis Katalog**", ["Lokal", "Nasional", "Sektoral", "Gabungan"])
             with KATALOG_radio_2:
                 #nama_sumber_dana = st.radio("**Sumber Dana**", df_ECAT_OK['nama_sumber_dana'].unique())    
-                nama_sumber_dana = st.radio("**Sumber Dana**", ["APBD", "APBDP", "APBN", "APBNP", "BLUD", "BLU", "BUMN", "BUMD"])
+                nama_sumber_dana = st.radio("**Sumber Dana**", ["APBD", "APBDP", "APBN", "APBNP", "BLUD", "BLU", "BUMN", "BUMD", "Gabungan"])
             with KATALOG_radio_3:
                 status_paket = st.radio("**Status Paket**", ["Paket Selesai", "Paket Proses", "Gabungan"])
             st.write(f"Anda memilih : **{status_paket}** dan **{jenis_katalog}** dan **{nama_sumber_dana}**")
 
-            if (jenis_katalog == "Gabungan" and status_paket == "Gabungan"):
-                df_ECAT_filter = con.execute(f"SELECT * FROM df_ECAT_OK WHERE nama_sumber_dana = '{nama_sumber_dana}'").df()
+            if (jenis_katalog == "Gabungan" and status_paket == "Gabungan" and nama_sumber_dana == "Gabungan"):
+                # df_ECAT_filter = con.execute(f"SELECT * FROM df_ECAT_OK WHERE nama_sumber_dana = '{nama_sumber_dana}'").df()
+                df_ECAT_filter = con.execute(f"SELECT * FROM df_ECAR_OK").df()
             elif jenis_katalog == "Gabungan":
                 df_ECAT_filter = con.execute(f"SELECT * FROM df_ECAT_OK WHERE nama_sumber_dana = '{nama_sumber_dana}' AND paket_status_str = '{status_paket}'").df()
+            elif nama_sumber_dana == "Gabungan":
+                df_ECAT_filter = con.execute(f"SELECT * FROM df_ECAT_OK WHERE jenis_katalog = '{jenis_katalog}' AND paket_status_str = '{status_paket}'").df()
             elif status_paket == "Gabungan":
                 df_ECAT_filter = con.execute(f"SELECT * FROM df_ECAT_OK WHERE nama_sumber_dana = '{nama_sumber_dana}' AND jenis_katalog = '{jenis_katalog}'").df()
             else:    
