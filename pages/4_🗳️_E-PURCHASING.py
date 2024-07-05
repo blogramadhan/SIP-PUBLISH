@@ -121,17 +121,34 @@ with menu_purchasing_1:
                 status_paket = st.radio("**Status Paket**", ["Paket Selesai", "Paket Proses", "Gabungan"])
             st.write(f"Anda memilih : **{status_paket}** dan **{jenis_katalog}** dan **{nama_sumber_dana}**")
 
-            if (jenis_katalog == "Gabungan" and status_paket == "Gabungan" and nama_sumber_dana == "Gabungan"):
-                # df_ECAT_filter = con.execute(f"SELECT * FROM df_ECAT_OK WHERE nama_sumber_dana = '{nama_sumber_dana}'").df()
-                df_ECAT_filter = con.execute(f"SELECT * FROM df_ECAT_OK").df()
-            elif jenis_katalog == "Gabungan":
-                df_ECAT_filter = con.execute(f"SELECT * FROM df_ECAT_OK WHERE nama_sumber_dana = '{nama_sumber_dana}' AND paket_status_str = '{status_paket}'").df()
-            elif nama_sumber_dana == "Gabungan":
-                df_ECAT_filter = con.execute(f"SELECT * FROM df_ECAT_OK WHERE jenis_katalog = '{jenis_katalog}' AND paket_status_str = '{status_paket}'").df()
-            elif status_paket == "Gabungan":
-                df_ECAT_filter = con.execute(f"SELECT * FROM df_ECAT_OK WHERE nama_sumber_dana = '{nama_sumber_dana}' AND jenis_katalog = '{jenis_katalog}'").df()
-            else:    
-                df_ECAT_filter = con.execute(f"SELECT * FROM df_ECAT_OK WHERE nama_sumber_dana = '{nama_sumber_dana}' AND jenis_katalog = '{jenis_katalog}' AND paket_status_str = '{status_paket}'").df()
+            # if (jenis_katalog == "Gabungan" and status_paket == "Gabungan" and nama_sumber_dana == "Gabungan"):
+            #     # df_ECAT_filter = con.execute(f"SELECT * FROM df_ECAT_OK WHERE nama_sumber_dana = '{nama_sumber_dana}'").df()
+            #     df_ECAT_filter = con.execute(f"SELECT * FROM df_ECAT_OK").df()
+            # elif jenis_katalog == "Gabungan":
+            #     if (status_paket != "Gabungan" and nama_sumber_dana != "Gabungan"):
+            #         df_ECAT_filter = con.execute(f"SELECT * FROM df_ECAT_OK WHERE nama_sumber_dana = '{nama_sumber_dana}' AND paket_status_str = '{status_paket}'").df()
+            #     if status_paket != "Gabungan":
+            #         df_ECAT_filter = con.execute(f"").df()
+            #     if nama_sumber_dana != "Gabungan":
+            #         df_ECAT_filter = con.execute(f"").df()
+            # elif nama_sumber_dana == "Gabungan":
+            #     df_ECAT_filter = con.execute(f"SELECT * FROM df_ECAT_OK WHERE jenis_katalog = '{jenis_katalog}' AND paket_status_str = '{status_paket}'").df()
+            # elif status_paket == "Gabungan":
+            #     df_ECAT_filter = con.execute(f"SELECT * FROM df_ECAT_OK WHERE nama_sumber_dana = '{nama_sumber_dana}' AND jenis_katalog = '{jenis_katalog}'").df()
+            # else:    
+            #     df_ECAT_filter = con.execute(f"SELECT * FROM df_ECAT_OK WHERE nama_sumber_dana = '{nama_sumber_dana}' AND jenis_katalog = '{jenis_katalog}' AND paket_status_str = '{status_paket}'").df()
+
+            df_ECAT_filter_Query = f"SELECT * FROM df_ECAT_OK WHERE 1=1"
+
+            # Buat logika untuk query dari pilihan kondisi (3 kondisi)
+            if jenis_katalog != "Gabungan":
+                df_ECAT_filter_Query += f" AND jenis_katalog = '{jenis_katalog}'"
+            if nama_sumber_dana != "Gabungan":
+                df_ECAT_filter_Query += f" AND nama_sumber_dana = '{nama_sumber_dana}'"
+            if status_paket != "Gabungan":
+                df_ECAT_filter_Query += f" AND status_paket = '{status_paket}'"
+
+            df_ECAT_filter = con.execute(df_ECAT_filter_Query).df()
 
             jumlah_produk = df_ECAT_filter['kd_produk'].unique().shape[0]
             jumlah_penyedia = df_ECAT_filter['kd_penyedia'].unique().shape[0]
