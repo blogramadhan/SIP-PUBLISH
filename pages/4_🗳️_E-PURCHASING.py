@@ -123,7 +123,7 @@ with menu_purchasing_1:
 
             if (jenis_katalog == "Gabungan" and status_paket == "Gabungan" and nama_sumber_dana == "Gabungan"):
                 # df_ECAT_filter = con.execute(f"SELECT * FROM df_ECAT_OK WHERE nama_sumber_dana = '{nama_sumber_dana}'").df()
-                df_ECAT_filter = con.execute(f"SELECT * FROM df_ECAR_OK").df()
+                df_ECAT_filter = con.execute(f"SELECT * FROM df_ECAT_OK").df()
             elif jenis_katalog == "Gabungan":
                 df_ECAT_filter = con.execute(f"SELECT * FROM df_ECAT_OK WHERE nama_sumber_dana = '{nama_sumber_dana}' AND paket_status_str = '{status_paket}'").df()
             elif nama_sumber_dana == "Gabungan":
