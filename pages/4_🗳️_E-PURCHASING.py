@@ -111,7 +111,7 @@ with menu_purchasing_1:
 
             st.divider()
 
-            KATALOG_radio_1, KATALOG_radio_2, KATALOG_radio_3 = st.columns((2,5,3))
+            KATALOG_radio_1, KATALOG_radio_2, KATALOG_radio_3 = st.columns((1,6,3))
             with KATALOG_radio_1:
                 jenis_katalog_array = df_ECAT_OK['jenis_katalog'].unique()
                 jenis_katalog_array_ok = np.append(jenis_katalog_array, "Gabungan")
