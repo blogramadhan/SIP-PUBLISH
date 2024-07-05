@@ -111,7 +111,7 @@ with menu_purchasing_1:
 
             st.divider()
 
-            KATALOG_radio_1, KATALOG_radio_2, KATALOG_radio_3 = st.columns((1,6,3))
+            KATALOG_radio_1, KATALOG_radio_2, KATALOG_radio_3 = st.columns((1,6,2))
             with KATALOG_radio_1:
                 jenis_katalog_array = df_ECAT_OK['jenis_katalog'].unique()
                 jenis_katalog_array_ok = np.append(jenis_katalog_array, "Gabungan")
@@ -126,23 +126,6 @@ with menu_purchasing_1:
                 status_paket_array_ok = np.append(status_paket_array, "Gabungan")
                 status_paket = st.radio("**Status Paket**", status_paket_array_ok)
             st.write(f"Anda memilih : **{status_paket}** dan **{jenis_katalog}** dan **{nama_sumber_dana}**")
-
-            # if (jenis_katalog == "Gabungan" and status_paket == "Gabungan" and nama_sumber_dana == "Gabungan"):
-            #     # df_ECAT_filter = con.execute(f"SELECT * FROM df_ECAT_OK WHERE nama_sumber_dana = '{nama_sumber_dana}'").df()
-            #     df_ECAT_filter = con.execute(f"SELECT * FROM df_ECAT_OK").df()
-            # elif jenis_katalog == "Gabungan":
-            #     if (status_paket != "Gabungan" and nama_sumber_dana != "Gabungan"):
-            #         df_ECAT_filter = con.execute(f"SELECT * FROM df_ECAT_OK WHERE nama_sumber_dana = '{nama_sumber_dana}' AND paket_status_str = '{status_paket}'").df()
-            #     if status_paket != "Gabungan":
-            #         df_ECAT_filter = con.execute(f"").df()
-            #     if nama_sumber_dana != "Gabungan":
-            #         df_ECAT_filter = con.execute(f"").df()
-            # elif nama_sumber_dana == "Gabungan":
-            #     df_ECAT_filter = con.execute(f"SELECT * FROM df_ECAT_OK WHERE jenis_katalog = '{jenis_katalog}' AND paket_status_str = '{status_paket}'").df()
-            # elif status_paket == "Gabungan":
-            #     df_ECAT_filter = con.execute(f"SELECT * FROM df_ECAT_OK WHERE nama_sumber_dana = '{nama_sumber_dana}' AND jenis_katalog = '{jenis_katalog}'").df()
-            # else:    
-            #     df_ECAT_filter = con.execute(f"SELECT * FROM df_ECAT_OK WHERE nama_sumber_dana = '{nama_sumber_dana}' AND jenis_katalog = '{jenis_katalog}' AND paket_status_str = '{status_paket}'").df()
 
             df_ECAT_filter_Query = f"SELECT * FROM df_ECAT_OK WHERE 1=1"
 
