@@ -111,17 +111,20 @@ with menu_purchasing_1:
 
             st.divider()
 
-            KATALOG_radio_1, KATALOG_radio_2, KATALOG_radio_3, KATALOG_radio_4 = st.columns((1,1,2,6))
+            KATALOG_radio_1, KATALOG_radio_2, KATALOG_radio_3 = st.columns((2,5,3))
             with KATALOG_radio_1:
                 jenis_katalog_array = df_ECAT_OK['jenis_katalog'].unique()
                 jenis_katalog_array_ok = np.append(jenis_katalog_array, "Gabungan")
                 jenis_katalog = st.radio("**Jenis Katalog**", jenis_katalog_array_ok)
-                # jenis_katalog = st.radio("**Jenis Katalog**", ["Lokal", "Nasional", "Sektoral", "Gabungan"])
             with KATALOG_radio_2:
-                nama_sumber_dana = st.radio("**Sumber Dana**", df_ECAT_OK['nama_sumber_dana'].unique())    
+                nama_sumber_dana_array = df_ECAT_OK['nama_sumber_dana'].unique()
+                nama_sumber_dana_array_ok = np.append(nama_sumber_dana_array, "Gabungan")
+                nama_sumber_dana = st.radio("**Sumber Dana**", nama_sumber_dana_array_ok)
                 # nama_sumber_dana = st.radio("**Sumber Dana**", ["APBD", "APBDP", "APBN", "APBNP", "BLUD", "BLU", "BUMN", "BUMD", "Gabungan"])
             with KATALOG_radio_3:
-                status_paket = st.radio("**Status Paket**", ["Paket Selesai", "Paket Proses", "Gabungan"])
+                status_paket_array = df_ECAT_OK['status_paket'].unique()
+                status_paket_array_ok = np.append(status_paket_array, "Gabungan")
+                status_paket = st.radio("**Status Paket**", status_paket_array_ok)
             st.write(f"Anda memilih : **{status_paket}** dan **{jenis_katalog}** dan **{nama_sumber_dana}**")
 
             # if (jenis_katalog == "Gabungan" and status_paket == "Gabungan" and nama_sumber_dana == "Gabungan"):
