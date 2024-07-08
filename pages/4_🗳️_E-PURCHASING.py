@@ -111,7 +111,7 @@ with menu_purchasing_1:
 
             st.divider()
 
-            KATALOG_radio_1, KATALOG_radio_2, KATALOG_radio_3, KATALOG_radio_4 = st.columns((1,1,2,6))
+            KATALOG_radio_1, KATALOG_radio_2, KATALOG_radio_3, KATALOG_radio_4 = st.columns((1,1,3,5))
             with KATALOG_radio_1:
                 jenis_katalog_array = df_ECAT_OK['jenis_katalog'].unique()
                 jenis_katalog_array_ok = np.insert(jenis_katalog_array, 0, "Gabungan")
@@ -225,7 +225,7 @@ with menu_purchasing_1:
 
             with st.container(border=True):
 
-                st.subheader("Berdasarkan Nama Komoditas")
+                st.subheader("Berdasarkan Nama Komoditas (10 Besar)")
 
                 #### Buat Grafik Katalog Berdasarkan Nama Komoditas
                 grafik_ecat_nk_1, grafik_ecat_nk_2 = st.tabs(["| Jumlah Transaksi Tiap Komoditas |", "| Nilai Transaksi Tiap Komoditas |"])
@@ -237,13 +237,13 @@ with menu_purchasing_1:
                         sql_jumlah_transaksi_lokal_nk = f"""
                             SELECT nama_komoditas AS NAMA_KOMODITAS, COUNT(DISTINCT(no_paket)) AS JUMLAH_TRANSAKSI
                             FROM df_ECAT_filter WHERE NAMA_KOMODITAS IS NOT NULL AND kd_instansi_katalog = '{kodeRUP}'
-                            GROUP BY NAMA_KOMODITAS ORDER BY JUMLAH_TRANSAKSI DESC
+                            GROUP BY NAMA_KOMODITAS ORDER BY JUMLAH_TRANSAKSI DESC LIMIT 10
                         """
                     else:
                         sql_jumlah_transaksi_lokal_nk = f"""
                             SELECT nama_komoditas AS NAMA_KOMODITAS, COUNT(DISTINCT(no_paket)) AS JUMLAH_TRANSAKSI
                             FROM df_ECAT_filter WHERE NAMA_KOMODITAS IS NOT NULL 
-                            GROUP BY NAMA_KOMODITAS ORDER BY JUMLAH_TRANSAKSI DESC
+                            GROUP BY NAMA_KOMODITAS ORDER BY JUMLAH_TRANSAKSI DESC LIMIT 10
                         """
 
                     tabel_jumlah_transaksi_lokal_nk = con.execute(sql_jumlah_transaksi_lokal_nk).df()
@@ -277,13 +277,13 @@ with menu_purchasing_1:
                         sql_nilai_transaksi_lokal_nk = f"""
                             SELECT nama_komoditas AS NAMA_KOMODITAS, SUM(total_harga) AS NILAI_TRANSAKSI
                             FROM df_ECAT_filter WHERE NAMA_KOMODITAS IS NOT NULL AND kd_instansi_katalog = '{kodeRUP}'
-                            GROUP BY NAMA_KOMODITAS ORDER BY NILAI_TRANSAKSI DESC
+                            GROUP BY NAMA_KOMODITAS ORDER BY NILAI_TRANSAKSI DESC LIMIT 10
                         """
                     else:
                         sql_nilai_transaksi_lokal_nk = f"""
                             SELECT nama_komoditas AS NAMA_KOMODITAS, SUM(total_harga) AS NILAI_TRANSAKSI
                             FROM df_ECAT_filter WHERE NAMA_KOMODITAS IS NOT NULL
-                            GROUP BY NAMA_KOMODITAS ORDER BY NILAI_TRANSAKSI DESC
+                            GROUP BY NAMA_KOMODITAS ORDER BY NILAI_TRANSAKSI DESC LIMIT 10
                         """
 
                     tabel_nilai_transaksi_lokal_nk = con.execute(sql_nilai_transaksi_lokal_nk).df()
