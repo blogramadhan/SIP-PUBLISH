@@ -111,7 +111,7 @@ with menu_purchasing_1:
 
             st.divider()
 
-            KATALOG_radio_1, KATALOG_radio_2, KATALOG_radio_3 = st.columns((1,6,2))
+            KATALOG_radio_1, KATALOG_radio_2, KATALOG_radio_3, KATALOG_radio_4 = st.columns((1,1,1,7))
             with KATALOG_radio_1:
                 jenis_katalog_array = df_ECAT_OK['jenis_katalog'].unique()
                 jenis_katalog_array_ok = np.insert(jenis_katalog_array, 0, "Gabungan")
@@ -132,7 +132,10 @@ with menu_purchasing_1:
             if jenis_katalog != "Gabungan":
                 df_ECAT_filter_Query += f" AND jenis_katalog = '{jenis_katalog}'"
             if nama_sumber_dana != "Gabungan":
-                df_ECAT_filter_Query += f" AND nama_sumber_dana = '{nama_sumber_dana}'"
+                if "APBD" in nama_sumber_dana:
+                    df_ECAT_filter_Query += f" AND nama_sumber_dana LIKE '%APBD%'"
+                else:
+                    df_ECAT_filter_Query += f" AND nama_sumber_dana = '{nama_sumber_dana}'"
             if status_paket != "Gabungan":
                 df_ECAT_filter_Query += f" AND status_paket = '{status_paket}'"
 
