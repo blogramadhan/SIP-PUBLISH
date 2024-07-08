@@ -137,7 +137,8 @@ with col_footer_3:
         st.markdown(
         """
         * Update V.7.20240531
-        * Update V.7.20240708 : *Perbaikan logika Transaksi e-Purchasing*
+        * Update V.7.20240708 : *
+          * *Perbaikan logika Transaksi e-Purchasing*
         """
         )
 
