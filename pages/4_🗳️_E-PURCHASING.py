@@ -117,9 +117,9 @@ with menu_purchasing_1:
                 jenis_katalog_array_ok = np.insert(jenis_katalog_array, 0, "Gabungan")
                 jenis_katalog = st.radio("**Jenis Katalog**", jenis_katalog_array_ok)
             with KATALOG_radio_2:
-                nama_sumber_dana_array = df_ECAT_OK['nama_sumber_dana'].unique()
-                nama_sumber_dana_array_ok = np.insert(nama_sumber_dana_array, 0, "Gabungan")
-                nama_sumber_dana = st.radio("**Sumber Dana**", nama_sumber_dana_array_ok)
+                # nama_sumber_dana_array = df_ECAT_OK['nama_sumber_dana'].unique()
+                # nama_sumber_dana_array_ok = np.insert(nama_sumber_dana_array, 0, "Gabungan")
+                nama_sumber_dana = st.radio("**Sumber Dana**", ["Gabungan", "APBD", "BLUD"])
             with KATALOG_radio_3:
                 status_paket_array = df_ECAT_OK['status_paket'].unique()
                 status_paket_array_ok = np.insert(status_paket_array, 0, "Gabungan")
