@@ -472,16 +472,35 @@ with menu_purchasing_1:
 
             ETALASE_radio_1, ETALASE_radio_2, ETALASE_radio_3, ETALASE_radio_4 = st.columns((1,1,2,6))
             with ETALASE_radio_1:
-                jenis_katalog_etalase = st.radio("**Jenis Katalog**", ["Lokal", "Nasional", "Sektoral"], key="Etalase_Jenis_Katalog")
+                jenis_katalog_etalase_array = df_ECAT_OK['jenis_katalog'].unique()
+                jenis_katalog_etalase_array_ok = np.insert(jenis_katalog_etalase_array, 0, "Gabungan")
+                jenis_katalog_etalase = st.radio("**Jenis Katalog**", jenis_katalog_etalase_array_ok, key="Etalase_Jenis_Katalog")
             with ETALASE_radio_2:
-                nama_sumber_dana_etalase = st.radio("**Sumber Dana**", ["APBD", "APBDP", "APBN", "APBNP", "BLUD", "BLU", "BUMN", "BUMD"], key="Etalase_Sumber_Dana")
+                nama_sumber_dana_etalase = st.radio("**Sumber Dana**", ["Gabungan", "APBD", "BLUD"], key="Etalase_Sumber_Dana")
             with ETALASE_radio_3:
-                status_paket_etalase = st.radio("**Status Paket**", ["Paket Selesai", "Paket Proses", "Gabungan"], key="Etalase_Status_Paket")
+                status_paket_etalase_array = df_ECAT_OK['status_paket'].unique()
+                status_paket_etalase_array_ok = np.insert(status_paket_etalase_array, 0, "Gabungan")
+                status_paket_etalase = st.radio("**Status Paket**", status_paket_etalase_array_ok, key="Etalase_Status_Paket")
 
-            if status_paket_etalase == "Gabungan":
-                df_ECAT_ETALASE = con.execute(f"SELECT * FROM df_ECAT_OK WHERE nama_sumber_dana = '{nama_sumber_dana_etalase}' AND jenis_katalog = '{jenis_katalog_etalase}'").df()
-            else:    
-                df_ECAT_ETALASE = con.execute(f"SELECT * FROM df_ECAT_OK WHERE nama_sumber_dana = '{nama_sumber_dana_etalase}' AND jenis_katalog = '{jenis_katalog_etalase}' AND paket_status_str = '{status_paket_etalase}'").df()
+            df_ECAT_ETALASE_Query = f"SELECT * FROM df_ECAT_OK WHERE 1=1"
+
+            # Buat logika untuk query dari pilihan kondisi (3 kondisi) 
+            if jenis_katalog_etalase != "Gabungan":
+                df_ECAT_ETALASE_Query += f" AND jenis_katalog = '{jenis_katalog_etalase}'"
+            if nama_sumber_dana_etalase != "Gabungan":
+                if "APBD" in nama_sumber_dana_etalase:
+                    df_ECAT_ETALASE_Query += f" AND nama_sumber_dana LIKE '%APBD%'"
+                else:
+                    df_ECAT_ETALASE_Query += f" AND nama_sumber_dana = '{nama_sumber_dana_etalase}'"
+            if status_paket != "Gabungan":
+                df_ECAT_ETALASE_Query += f" AND status_paket = '{status_paket_etalase}'"
+
+            df_ECAT_ETALASE = con.execute(df_ECAT_ETALASE_Query).df()
+
+            # if status_paket_etalase == "Gabungan":
+            #     df_ECAT_ETALASE = con.execute(f"SELECT * FROM df_ECAT_OK WHERE nama_sumber_dana = '{nama_sumber_dana_etalase}' AND jenis_katalog = '{jenis_katalog_etalase}'").df()
+            # else:    
+            #     df_ECAT_ETALASE = con.execute(f"SELECT * FROM df_ECAT_OK WHERE nama_sumber_dana = '{nama_sumber_dana_etalase}' AND jenis_katalog = '{jenis_katalog_etalase}' AND paket_status_str = '{status_paket_etalase}'").df()
    
             with ETALASE_radio_4:
                 nama_komoditas = st.selectbox("Pilih Etalase Belanja :", df_ECAT_ETALASE['nama_komoditas'].unique(), key="Etalase_Nama_Komoditas")
