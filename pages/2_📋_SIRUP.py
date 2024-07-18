@@ -805,19 +805,26 @@ with menu_rup_6:
     ### Analisa Data INPUT RUP (PERSEN)
     persen_rup_query = """
         SELECT
-            df_RUPSA.nama_satker AS NAMA_SATKER,
-            df_RUPSA.belanja_pengadaan AS STRUKTUR_ANGGARAN,
-            SUM(df_RUPPP_umumkan.pagu) AS RUP_PENYEDIA 
+            a.NAMA_SATKER,
+            a.STRUKTUR_ANGGARAN,
+            COALESCE(b.RUP_PENYEDIA, 0) AS RUP_PENYEDIA,
+            COALESCE(c.RUP_SWAKELOLA, 0) AS RUP_SWAKELOLA,
+            COALESCE(b.RUP_PENYEDIA, 0) + COALESCE(c.RUP_SWAKELOLA, 0) AS TOTAL_RUP,
+            a.STRUKTUR_ANGGARAN - COALESCE(b.RUP_PENYEDIA, 0) - COALESCE(c.RUP_SWAKELOLA, 0) AS SELISIH,
+            ROUND((COALESCE(b.RUP_PENYEDIA, 0) + COALESCE(c.RUP_SWAKELOLA, 0)) / a.STRUKTUR_ANGGARAN * 100, 2) AS PERSEN
         FROM
-            df_RUPSA
+            (SELECT nama_satker AS NAMA_SATKER, belanja_pengadaan AS STRUKTUR_ANGGARAN 
+            FROM df_RUPSA WHERE belanja_pengadaan > 0) a
         LEFT JOIN
-            df_RUPPP_umumkan ON df_RUPSA.nama_satker = df_RUPPP_umumkan.nama_satker
+            (SELECT nama_satker AS NAMA_SATKER, SUM(pagu) AS RUP_PENYEDIA 
+            FROM df_RUPPP_umumkan 
+            GROUP BY nama_satker) b
+        ON a.NAMA_SATKER = b.NAMA_SATKER
         LEFT JOIN
-            df_RUPPS_umumkan ON df_RUPSA.nama_satker = df_RUPPS_umumkan.nama_satker
-        WHERE
-            df_RUPSA.belanja_pengadaan > 0
-        GROUP BY
-            df_RUPSA.nama_satker, df_RUPSA.belanja_pengadaan       
+            (SELECT nama_satker AS NAMA_SATKER, SUM(pagu) AS RUP_SWAKELOLA 
+            FROM df_RUPPS_umumkan 
+            GROUP BY nama_satker) c
+        ON a.NAMA_SATKER = c.NAMA_SATKER       
     """
     ir_gabung_final = con.execute(persen_rup_query).df()
 
