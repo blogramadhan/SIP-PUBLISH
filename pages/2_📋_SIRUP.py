@@ -806,7 +806,8 @@ with menu_rup_6:
     persen_rup_query = """
         SELECT
             df_RUPSA.nama_satker AS NAMA_SATKER,
-            df_RUPSA.belanja_pengadaan AS STRUKTUR_ANGGARAN 
+            df_RUPSA.belanja_pengadaan AS STRUKTUR_ANGGARAN,
+            SUM(df_RUPPP_umumkan.pagu) AS RUP_PENYEDIA 
         FROM
             df_RUPSA
         LEFT JOIN
