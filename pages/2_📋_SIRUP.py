@@ -806,12 +806,7 @@ with menu_rup_6:
     persen_rup_query = """
         SELECT
             df_RUPSA.nama_satker AS NAMA_SATKER,
-            df_RUPSA.belanja_pengadaan AS STRUKTUR_ANGGARAN,
-            SUM(df_RUPPP_umumkan.pagu) AS RUP_PENYEDIA,
-            SUM(df_RUPPS_umumkan.pagu) AS RUP_SWAKELOLA,
-            SUM(df_RUPPP_umumkan.pagu) + SUM(df_RUPPS_umumkan.pagu) AS TOTAL_RUP,
-            df_RUPSA.belanja_pengadaan - SUM(df_RUPPP_umumkan.pagu) - SUM(df_RUPPS_umumkan.pagu) AS SELISIH,
-            ROUND((SUM(df_RUPPP_umumkan.pagu) + SUM(df_RUPPS_umumkan.pagu)) / df_RUPSA.belanja_pengadaan * 100, 2) AS PERSEN 
+            df_RUPSA.belanja_pengadaan AS STRUKTUR_ANGGARAN 
         FROM
             df_RUPSA
         LEFT JOIN
