@@ -807,11 +807,11 @@ with menu_rup_6:
         SELECT
             df_RUPSA.nama_satker AS NAMA_SATKER,
             df_RUPSA.belanja_pengadaan AS STRUKTUR_ANGGARAN,
-            COALESCE(SUM(df_RUPPP_umumkan.pagu), 0) AS RUP_PENYEDIA,
-            COALESCE(SUM(df_RUPPS_umumkan.pagu), 0) AS RUP_SWAKELOLA,
-            COALESCE(SUM(df_RUPPP_umumkan.pagu), 0) + COALESCE(SUM(df_RUPPS_umumkan.pagu), 0) AS TOTAL_RUP,
-            df_RUPSA.belanja_pengadaan - COALESCE(SUM(df_RUPPP_umumkan.pagu), 0) - COALESCE(SUM(df_RUPPS_umumkan.pagu), 0) AS SELISIH,
-            ROUND((COALESCE(SUM(df_RUPPP_umumkan.pagu), 0) + COALESCE(SUM(df_RUPPS_umumkan.pagu), 0)) / df_RUPSA.belanja_pengadaan * 100, 2) AS PERSEN 
+            SUM(df_RUPPP_umumkan.pagu) AS RUP_PENYEDIA,
+            SUM(df_RUPPS_umumkan.pagu) AS RUP_SWAKELOLA,
+            SUM(df_RUPPP_umumkan.pagu) + SUM(df_RUPPS_umumkan.pagu) AS TOTAL_RUP,
+            df_RUPSA.belanja_pengadaan - SUM(df_RUPPP_umumkan.pagu) - SUM(df_RUPPS_umumkan.pagu) AS SELISIH,
+            ROUND((SUM(df_RUPPP_umumkan.pagu) + SUM(df_RUPPS_umumkan.pagu)) / df_RUPSA.belanja_pengadaan * 100, 2) AS PERSEN 
         FROM
             df_RUPSA
         LEFT JOIN
