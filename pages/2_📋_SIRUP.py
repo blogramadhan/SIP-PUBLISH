@@ -805,26 +805,23 @@ with menu_rup_6:
     ### Analisa Data INPUT RUP (PERSEN)
     persen_rup_query = """
         SELECT
-            a.NAMA_SATKER,
-            a.STRUKTUR_ANGGARAN,
-            COALESCE(b.RUP_PENYEDIA, 0) AS RUP_PENYEDIA,
-            COALESCE(c.RUP_SWAKELOLA, 0) AS RUP_SWAKELOLA,
-            COALESCE(b.RUP_PENYEDIA, 0) + COALESCE(c.RUP_SWAKELOLA, 0) AS TOTAL_RUP,
-            a.STRUKTUR_ANGGARAN - COALESCE(b.RUP_PENYEDIA, 0) - COALESCE(c.RUP_SWAKELOLA, 0) AS SELISIH,
-            ROUND((COALESCE(b.RUP_PENYEDIA, 0) + COALESCE(c.RUP_SWAKELOLA, 0)) / a.STRUKTUR_ANGGARAN * 100, 2) AS PERSEN
+            df_RUPSA.nama_satker AS NAMA_SATKER,
+            df_RUPSA.belanja_pengadaan AS STRUKTUR_ANGGARAN,
+            COALESCE(SUM(df_RUPPP_umumkan.pagu), 0) AS RUP_PENYEDIA,
+            COALESCE(SUM(df_RUPPS_umumkan.pagu), 0) AS RUP_SWAKELOLA,
+            COALESCE(SUM(df_RUPPP_umumkan.pagu), 0) + COALESCE(SUM(df_RUPPS_umumkan.pagu), 0) AS TOTAL_RUP,
+            df_RUPSA.belanja_pengadaan - COALESCE(SUM(df_RUPPP_umumkan.pagu), 0) - COALESCE(SUM(df_RUPPS_umumkan.pagu), 0) AS SELISIH,
+            ROUND((COALESCE(SUM(df_RUPPP_umumkan.pagu), 0) + COALESCE(SUM(df_RUPPS_umumkan.pagu), 0)) / df_RUPSA.belanja_pengadaan * 100, 2) AS PERSEN
         FROM
-            (SELECT nama_satker AS NAMA_SATKER, belanja_pengadaan AS STRUKTUR_ANGGARAN 
-            FROM df_RUPSA WHERE belanja_pengadaan > 0) a
+            df_RUPSA
         LEFT JOIN
-            (SELECT nama_satker AS NAMA_SATKER, SUM(pagu) AS RUP_PENYEDIA 
-            FROM df_RUPPP_umumkan 
-            GROUP BY nama_satker) b
-        ON a.NAMA_SATKER = b.NAMA_SATKER
+            df_RUPPP_umumkan ON df_RUPSA.nama_satker = df_RUPPP_umumkan.nama_satker
         LEFT JOIN
-            (SELECT nama_satker AS NAMA_SATKER, SUM(pagu) AS RUP_SWAKELOLA 
-            FROM df_RUPPS_umumkan 
-            GROUP BY nama_satker) c
-        ON a.NAMA_SATKER = c.NAMA_SATKER       
+            df_RUPPS_umumkan ON df_RUPSA.nama_satker = df_RUPPS_umumkan.nama_satker
+        WHERE
+            df_RUPSA.belanja_pengadaan > 0
+        GROUP BY
+            df_RUPSA.nama_satker, df_RUPSA.belanja_pengadaan       
     """
     ir_gabung_final = con.execute(persen_rup_query).df()
 
