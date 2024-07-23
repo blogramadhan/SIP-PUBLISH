@@ -139,6 +139,9 @@ with menu_spse_1:
             with SPSE_radio_2:
                 status_tender_unik = df_SPSETenderPengumuman['status_tender'].unique()
                 status_tender = st.radio("**Status Tender**", status_tender_unik, key="Status_Tender_Pengumuman")
+            with SPSE_radio_3:
+                nama_satker_unik = df_SPSETenderPengumuman['nama_satker'].unique()
+                nama_satker = st.selectbox("Pilih Perangkat Daerah :", nama_satker_unik, key='Nama_Satker_Pengumuman')
             st.write(f"Anda memilih : **{sumber_dana}** dan **{status_tender}**")
 
             df_SPSETenderPengumuman_filter = con.execute(f"SELECT kd_tender, pagu, hps, kualifikasi_paket, jenis_pengadaan, mtd_pemilihan, mtd_evaluasi, mtd_kualifikasi, kontrak_pembayaran FROM df_SPSETenderPengumuman WHERE sumber_dana = '{sumber_dana}' AND status_tender = '{status_tender}'").df()
