@@ -127,9 +127,9 @@ with menu_purchasing_1:
                 status_paket = st.radio("**Status Paket**", status_paket_array_ok)
             st.write(f"Anda memilih : **{status_paket}** dan **{jenis_katalog}** dan **{nama_sumber_dana}**")
 
+            # Buat logika untuk query dari pilihan kondisi (3 kondisi)
             df_ECAT_filter_Query = f"SELECT * FROM df_ECAT_OK WHERE 1=1"
 
-            # Buat logika untuk query dari pilihan kondisi (3 kondisi)
             if jenis_katalog != "Gabungan":
                 df_ECAT_filter_Query += f" AND jenis_katalog = '{jenis_katalog}'"
             if nama_sumber_dana != "Gabungan":

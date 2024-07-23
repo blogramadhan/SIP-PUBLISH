@@ -143,11 +143,22 @@ with menu_spse_1:
                 status_tender = st.radio("**Status Tender**", status_tender_unik_array_ok, key="Status_Tender_Pengumuman")
             with SPSE_radio_3:
                 nama_satker_unik_array = df_SPSETenderPengumuman['nama_satker'].unique()
-                nama_satker_unik_array_ok = np.insert(nama_satker_unik_array, 0, "Semua Satker")
+                nama_satker_unik_array_ok = np.insert(nama_satker_unik_array, 0, "Semua Perangkat Daerah")
                 nama_satker = st.selectbox("Pilih Perangkat Daerah :", nama_satker_unik_array_ok, key='Nama_Satker_Pengumuman')
             st.write(f"Anda memilih : **{sumber_dana}** dan **{status_tender}**")
 
-            df_SPSETenderPengumuman_filter = con.execute(f"SELECT kd_tender, pagu, hps, kualifikasi_paket, jenis_pengadaan, mtd_pemilihan, mtd_evaluasi, mtd_kualifikasi, kontrak_pembayaran FROM df_SPSETenderPengumuman WHERE sumber_dana = '{sumber_dana}' AND status_tender = '{status_tender}' AND nama_satker = '{nama_satker}'").df()
+            # Buat logika untuk query dari pilihan 3 kondisi
+            df_SPSETenderPengumuman_filter_query = f"SELECT * FROM df_SPSETenderPengumuman WHERE 1=1"
+
+            if sumber_dana != "Gabungan":
+                df_SPSETenderPengumuman_filter_query += f" AND sumber_dana = '{sumber_dana}'"
+            if status_tender != "Gabungan":
+                df_SPSETenderPengumuman_filter_query += f" AND status_tender = '{status_tender}'"
+            if nama_satker != "Semua Perangkat Daerah":
+                df_SPSETenderPengumuman_filter_query += f" AND nama_satker = '{nama_satker}'"
+
+            df_SPSETenderPengumuman_filter = con.execute(df_SPSETenderPengumuman_filter_query).df()
+            
             jumlah_trx_spse_pengumuman = df_SPSETenderPengumuman_filter['kd_tender'].unique().shape[0]
             nilai_trx_spse_pengumuman_pagu = df_SPSETenderPengumuman_filter['pagu'].sum()
             nilai_trx_spse_pengumuman_hps = df_SPSETenderPengumuman_filter['hps'].sum()
