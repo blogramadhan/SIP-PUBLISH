@@ -1,6 +1,7 @@
 # Library Utama
 import streamlit as st
 import pandas as pd
+import numpy as np
 import plotly.express as px
 import duckdb
 import openpyxl
@@ -137,11 +138,13 @@ with menu_spse_1:
                 sumber_dana_unik = df_SPSETenderPengumuman['sumber_dana'].unique()
                 sumber_dana = st.radio("**Sumber Dana**", sumber_dana_unik, key="Sumber_Dana_Tender_pengumuman")
             with SPSE_radio_2:
-                status_tender_unik = df_SPSETenderPengumuman['status_tender'].unique()
-                status_tender = st.radio("**Status Tender**", status_tender_unik, key="Status_Tender_Pengumuman")
+                status_tender_unik_array = df_SPSETenderPengumuman['status_tender'].unique()
+                status_tender_unik_array_ok = np.insert(status_tender_unik_array, 0, "Gabungan")
+                status_tender = st.radio("**Status Tender**", status_tender_unik_array_ok, key="Status_Tender_Pengumuman")
             with SPSE_radio_3:
-                nama_satker_unik = df_SPSETenderPengumuman['nama_satker'].unique()
-                nama_satker = st.selectbox("Pilih Perangkat Daerah :", nama_satker_unik, key='Nama_Satker_Pengumuman')
+                nama_satker_unik_array = df_SPSETenderPengumuman['nama_satker'].unique()
+                nama_satker_unik_array_ok = np.insert(nama_satker_unik_array, 0, "Semua Satker")
+                nama_satker = st.selectbox("Pilih Perangkat Daerah :", nama_satker_unik_array_ok, key='Nama_Satker_Pengumuman')
             st.write(f"Anda memilih : **{sumber_dana}** dan **{status_tender}**")
 
             df_SPSETenderPengumuman_filter = con.execute(f"SELECT kd_tender, pagu, hps, kualifikasi_paket, jenis_pengadaan, mtd_pemilihan, mtd_evaluasi, mtd_kualifikasi, kontrak_pembayaran FROM df_SPSETenderPengumuman WHERE sumber_dana = '{sumber_dana}' AND status_tender = '{status_tender}' AND nama_satker = '{nama_satker}'").df()
