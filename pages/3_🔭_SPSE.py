@@ -144,7 +144,7 @@ with menu_spse_1:
                 nama_satker = st.selectbox("Pilih Perangkat Daerah :", nama_satker_unik, key='Nama_Satker_Pengumuman')
             st.write(f"Anda memilih : **{sumber_dana}** dan **{status_tender}**")
 
-            df_SPSETenderPengumuman_filter = con.execute(f"SELECT kd_tender, pagu, hps, kualifikasi_paket, jenis_pengadaan, mtd_pemilihan, mtd_evaluasi, mtd_kualifikasi, kontrak_pembayaran FROM df_SPSETenderPengumuman WHERE sumber_dana = '{sumber_dana}' AND status_tender = '{status_tender}'").df()
+            df_SPSETenderPengumuman_filter = con.execute(f"SELECT kd_tender, pagu, hps, kualifikasi_paket, jenis_pengadaan, mtd_pemilihan, mtd_evaluasi, mtd_kualifikasi, kontrak_pembayaran FROM df_SPSETenderPengumuman WHERE sumber_dana = '{sumber_dana}' AND status_tender = '{status_tender}' AND nama_satker = '{nama_satker}'").df()
             jumlah_trx_spse_pengumuman = df_SPSETenderPengumuman_filter['kd_tender'].unique().shape[0]
             nilai_trx_spse_pengumuman_pagu = df_SPSETenderPengumuman_filter['pagu'].sum()
             nilai_trx_spse_pengumuman_hps = df_SPSETenderPengumuman_filter['hps'].sum()
