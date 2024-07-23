@@ -114,6 +114,7 @@ with menu_spse_1:
 
             ### Analisa DATA SPSE - TENDER - PENGUMUMAN
             df_SPSETenderPengumuman = tarik_data_parquet(DatasetSPSETenderPengumuman)
+            df_SPSETenderPengumuman = df_SPSETenderPengumuman.drop(columns=['nama_pokja'])
 
             ### Unduh Dataframe Data SPSE - Tender - Pengumuman
             unduh_SPSE_Pengumuman_excel = download_excel(df_SPSETenderPengumuman)
