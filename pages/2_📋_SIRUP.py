@@ -803,36 +803,36 @@ with menu_rup_6:
     st.header(f"INPUT RUP (PERSEN) {pilih} TAHUN {tahun}")
 
     ### Analisa Data INPUT RUP (PERSEN)
-    persen_rup_query = """
-        SELECT
-            df_RUPSA.nama_satker AS NAMA_SATKER,
-            df_RUPSA.belanja_pengadaan AS STRUKTUR_ANGGARAN,
-            COALESCE(SUM(df_RUPPP_umumkan.pagu), 0) AS RUP_PENYEDIA,
-            COALESCE(SUM(df_RUPPS_umumkan.pagu), 0) AS RUP_SWAKELOLA,
-            COALESCE(SUM(df_RUPPP_umumkan.pagu), 0) + COALESCE(SUM(df_RUPPS_umumkan.pagu), 0) AS TOTAL_RUP,
-            df_RUPSA.belanja_pengadaan - COALESCE(SUM(df_RUPPP_umumkan.pagu), 0) - COALESCE(SUM(df_RUPPS_umumkan.pagu), 0) AS SELISIH,
-            ROUND((COALESCE(SUM(df_RUPPP_umumkan.pagu), 0) + COALESCE(SUM(df_RUPPS_umumkan.pagu), 0)) / df_RUPSA.belanja_pengadaan * 100, 2) AS PERSEN
-        FROM
-            df_RUPSA
-        LEFT JOIN
-            df_RUPPP_umumkan ON df_RUPSA.nama_satker = df_RUPPP_umumkan.nama_satker
-        LEFT JOIN
-            df_RUPPS_umumkan ON df_RUPSA.nama_satker = df_RUPPS_umumkan.nama_satker
-        WHERE
-            df_RUPSA.belanja_pengadaan > 0
-        GROUP BY
-            df_RUPSA.nama_satker, df_RUPSA.belanja_pengadaan       
-    """
-    ir_gabung_final = con.execute(persen_rup_query).df()
+    # persen_rup_query = """
+    #     SELECT
+    #         df_RUPSA.nama_satker AS NAMA_SATKER,
+    #         df_RUPSA.belanja_pengadaan AS STRUKTUR_ANGGARAN,
+    #         COALESCE(SUM(df_RUPPP_umumkan.pagu), 0) AS RUP_PENYEDIA,
+    #         COALESCE(SUM(df_RUPPS_umumkan.pagu), 0) AS RUP_SWAKELOLA,
+    #         COALESCE(SUM(df_RUPPP_umumkan.pagu), 0) + COALESCE(SUM(df_RUPPS_umumkan.pagu), 0) AS TOTAL_RUP,
+    #         df_RUPSA.belanja_pengadaan - COALESCE(SUM(df_RUPPP_umumkan.pagu), 0) - COALESCE(SUM(df_RUPPS_umumkan.pagu), 0) AS SELISIH,
+    #         ROUND((COALESCE(SUM(df_RUPPP_umumkan.pagu), 0) + COALESCE(SUM(df_RUPPS_umumkan.pagu), 0)) / df_RUPSA.belanja_pengadaan * 100, 2) AS PERSEN
+    #     FROM
+    #         df_RUPSA
+    #     LEFT JOIN
+    #         df_RUPPP_umumkan ON df_RUPSA.nama_satker = df_RUPPP_umumkan.nama_satker
+    #     LEFT JOIN
+    #         df_RUPPS_umumkan ON df_RUPSA.nama_satker = df_RUPPS_umumkan.nama_satker
+    #     WHERE
+    #         df_RUPSA.belanja_pengadaan > 0
+    #     GROUP BY
+    #         df_RUPSA.nama_satker, df_RUPSA.belanja_pengadaan       
+    # """
+    # ir_gabung_final = con.execute(persen_rup_query).df()
 
-    # ir_strukturanggaran = con.execute("SELECT nama_satker AS NAMA_SATKER, belanja_pengadaan AS STRUKTUR_ANGGARAN FROM df_RUPSA WHERE STRUKTUR_ANGGARAN > 0").df()
-    # ir_paketpenyedia = con.execute("SELECT nama_satker AS NAMA_SATKER, SUM(pagu) AS RUP_PENYEDIA FROM df_RUPPP_umumkan GROUP BY NAMA_SATKER").df()
-    # ir_paketswakelola = con.execute("SELECT nama_satker AS NAMA_SATKER, SUM(pagu) AS RUP_SWAKELOLA FROM df_RUPPS_umumkan GROUP BY NAMA_SATKER").df()   
+    ir_strukturanggaran = con.execute("SELECT nama_satker AS NAMA_SATKER, belanja_pengadaan AS STRUKTUR_ANGGARAN FROM df_RUPSA WHERE STRUKTUR_ANGGARAN > 0").df()
+    ir_paketpenyedia = con.execute("SELECT nama_satker AS NAMA_SATKER, SUM(pagu) AS RUP_PENYEDIA FROM df_RUPPP_umumkan GROUP BY NAMA_SATKER").df()
+    ir_paketswakelola = con.execute("SELECT nama_satker AS NAMA_SATKER, SUM(pagu) AS RUP_SWAKELOLA FROM df_RUPPS_umumkan GROUP BY NAMA_SATKER").df()   
 
-    # ir_gabung = pd.merge(pd.merge(ir_strukturanggaran, ir_paketpenyedia, how='left', on='NAMA_SATKER'), ir_paketswakelola, how='left', on='NAMA_SATKER')
-    # ir_gabung_totalrup = ir_gabung.assign(TOTAL_RUP = lambda x: x.RUP_PENYEDIA + x.RUP_SWAKELOLA)
-    # ir_gabung_selisih = ir_gabung_totalrup.assign(SELISIH = lambda x: x.STRUKTUR_ANGGARAN - x.RUP_PENYEDIA - x.RUP_SWAKELOLA) 
-    # ir_gabung_final = ir_gabung_selisih.assign(PERSEN = lambda x: round(((x.RUP_PENYEDIA + x.RUP_SWAKELOLA) / x.STRUKTUR_ANGGARAN * 100), 2)).fillna(0)
+    ir_gabung = pd.merge(pd.merge(ir_strukturanggaran, ir_paketpenyedia, how='left', on='NAMA_SATKER'), ir_paketswakelola, how='left', on='NAMA_SATKER')
+    ir_gabung_totalrup = ir_gabung.assign(TOTAL_RUP = lambda x: x.RUP_PENYEDIA + x.RUP_SWAKELOLA)
+    ir_gabung_selisih = ir_gabung_totalrup.assign(SELISIH = lambda x: x.STRUKTUR_ANGGARAN - x.RUP_PENYEDIA - x.RUP_SWAKELOLA) 
+    ir_gabung_final = ir_gabung_selisih.assign(PERSEN = lambda x: round(((x.RUP_PENYEDIA + x.RUP_SWAKELOLA) / x.STRUKTUR_ANGGARAN * 100), 2)).fillna(0)
 
     unduh_perseninputrup_excel = download_excel(ir_gabung_final)
 
