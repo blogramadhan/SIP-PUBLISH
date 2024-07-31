@@ -800,7 +800,7 @@ with menu_rup_5:
 
 with menu_rup_6:
 
-    st.header(f"INPUT RUP (PERSEN) {pilih} TAHUN {tahun}")
+    st.header(f"INPUT RUP (PERSEN) Halo {pilih} TAHUN {tahun}")
 
     ### Analisa Data INPUT RUP (PERSEN)
     # persen_rup_query = """
