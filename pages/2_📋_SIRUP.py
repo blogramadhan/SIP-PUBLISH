@@ -1,5 +1,4 @@
 # Library Utama
-import datetime
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -48,8 +47,6 @@ region_config = {
 
 daerah = list(region_config.keys())
 tahuns = ["2024", "2023", "2022"]
-
-year_now = datetime.datetime.now().year
 
 pilih = st.sidebar.selectbox("Pilih UKPBJ :", daerah)
 tahun = st.sidebar.selectbox("Pilih Tahun :", tahuns)
