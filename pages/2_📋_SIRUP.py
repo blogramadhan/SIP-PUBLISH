@@ -862,82 +862,76 @@ with menu_rup_6:
 
 with menu_rup_7:
 
-    if tahun >= 2024:
+    ### Analisa Data INPUT RUP (PERSEN) 31 Maret
+    try:
+        #### Baca file parquet dataset RUP 31 Maret
+        df_RUPPP31Mar = tarik_data_parquet(DatasetRUPPP31Mar)
+        df_RUPPS31Mar = tarik_data_parquet(DatasetRUPPS31Mar)
+        df_RUPSA31Mar = tarik_data_parquet(DatasetRUPSA31Mar)
 
-        ### Analisa Data INPUT RUP (PERSEN) 31 Maret
-        try:
-            #### Baca file parquet dataset RUP 31 Maret
-            df_RUPPP31Mar = tarik_data_parquet(DatasetRUPPP31Mar)
-            df_RUPPS31Mar = tarik_data_parquet(DatasetRUPPS31Mar)
-            df_RUPSA31Mar = tarik_data_parquet(DatasetRUPSA31Mar)
+        df_RUPPP_umumkan_31Mar = con.execute("SELECT * FROM df_RUPPP31Mar WHERE status_umumkan_rup = 'Terumumkan' AND status_aktif_rup = 'TRUE' AND metode_pengadaan <> '0'").df()
+        df_RUPPS_umumkan_31Mar = con.execute("SELECT * FROM df_RUPPS31Mar WHERE status_umumkan_rup = 'Terumumkan'").df() 
 
-            df_RUPPP_umumkan_31Mar = con.execute("SELECT * FROM df_RUPPP31Mar WHERE status_umumkan_rup = 'Terumumkan' AND status_aktif_rup = 'TRUE' AND metode_pengadaan <> '0'").df()
-            df_RUPPS_umumkan_31Mar = con.execute("SELECT * FROM df_RUPPS31Mar WHERE status_umumkan_rup = 'Terumumkan'").df() 
-
-        except Exception:
-            st.error("Gagal baca dataset RUP 31 Maret Tahun Berjalan")
-
-        ### Tabel INPUT RUP (PERSEN) 31 Maret
-        st.header(f"INPUT RUP (PERSEN - 31 Maret) {pilih} TAHUN {tahun}")
-
-        # persen_rup_query_31Mar = """
-        #     SELECT
-        #         df_RUPSA31Mar.nama_satker AS NAMA_SATKER,
-        #         df_RUPSA31Mar.belanja_pengadaan AS STRUKTUR_ANGGARAN,
-        #         COALESCE(SUM(df_RUPPP_umumkan_31Mar.pagu), 0) AS RUP_PENYEDIA,
-        #         COALESCE(SUM(df_RUPPS_umumkan_31Mar.pagu), 0) AS RUP_SWAKELOLA,
-        #         COALESCE(SUM(df_RUPPP_umumkan_31Mar.pagu), 0) + COALESCE(SUM(df_RUPPS_umumkan_31Mar.pagu), 0) AS TOTAL_RUP,
-        #         df_RUPSA31Mar.belanja_pengadaan - COALESCE(SUM(df_RUPPP_umumkan_31Mar.pagu), 0) - COALESCE(SUM(df_RUPPS_umumkan_31Mar.pagu), 0) AS SELISIH,
-        #         ROUND((COALESCE(SUM(df_RUPPP_umumkan_31Mar.pagu), 0) + COALESCE(SUM(df_RUPPS_umumkan_31Mar.pagu), 0)) / df_RUPSA31Mar.belanja_pengadaan * 100, 2) AS PERSEN 
-        #     FROM
-        #         df_RUPSA31Mar
-        #     LEFT JOIN
-        #         df_RUPPP_umumkan_31Mar ON df_RUPSA31Mar.nama_satker = df_RUPPP_umumkan_31Mar.nama_satker
-        #     LEFT JOIN
-        #         df_RUPPS_umumkan_31Mar ON df_RUPSA31Mar.nama_satker = df_RUPPS_umumkan_31Mar.nama_satker
-        #     WHERE
-        #         df_RUPSA31Mar.belanja_pengadaan > 0
-        #     GROUP BY
-        #         df_RUPSA31Mar.nama_satker, df_RUPSA31Mar.belanja_pengadaan       
-        # """
-        # ir_gabung_final_31Mar = con.execute(persen_rup_query_31Mar).df()
-
-        ir_strukturanggaran_31Mar = con.execute("SELECT nama_satker AS NAMA_SATKER, belanja_pengadaan AS STRUKTUR_ANGGARAN FROM df_RUPSA31Mar WHERE STRUKTUR_ANGGARAN > 0").df()
-        ir_paketpenyedia_31Mar = con.execute("SELECT nama_satker AS NAMA_SATKER, SUM(pagu) AS RUP_PENYEDIA FROM df_RUPPP_umumkan_31Mar GROUP BY NAMA_SATKER").df()
-        ir_paketswakelola_31Mar = con.execute("SELECT nama_satker AS NAMA_SATKER, SUM(pagu) AS RUP_SWAKELOLA FROM df_RUPPS_umumkan_31Mar GROUP BY NAMA_SATKER").df()   
-
-        ir_gabung_31Mar = pd.merge(pd.merge(ir_strukturanggaran_31Mar, ir_paketpenyedia_31Mar, how='left', on='NAMA_SATKER'), ir_paketswakelola_31Mar, how='left', on='NAMA_SATKER')
-        ir_gabung_totalrup_31Mar = ir_gabung_31Mar.assign(TOTAL_RUP = lambda x: x.RUP_PENYEDIA + x.RUP_SWAKELOLA)
-        ir_gabung_selisih_31Mar = ir_gabung_totalrup_31Mar.assign(SELISIH = lambda x: x.STRUKTUR_ANGGARAN - x.RUP_PENYEDIA - x.RUP_SWAKELOLA) 
-        ir_gabung_final_31Mar = ir_gabung_selisih_31Mar.assign(PERSEN = lambda x: round(((x.RUP_PENYEDIA + x.RUP_SWAKELOLA) / x.STRUKTUR_ANGGARAN * 100), 2)).fillna(0)
-
-        unduh_perseninputrup_31Mar_excel = download_excel(ir_gabung_final_31Mar)
-
-        st.download_button(
-            label = "📥 Download Data % Input RUP",
-            data = unduh_perseninputrup_31Mar_excel,
-            file_name = f"TabelPersenInputRUP31Mar-{pilih}-{tahun}.xlsx",
-            mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
-
-        ### Tabel Input RUP (31 Maret)
-
-        st.dataframe(
-            ir_gabung_final_31Mar,
-            column_config={
-                "STRUKTUR_ANGGARAN": "STRUKTUR ANGGARAN",
-                "RUP_PENYEDIA": "RUP PENYEDIA",
-                "RUP_SWAKELOLA": "RUP SWAKELOLA",
-                "TOTAL_RUP": "TOTAL RUP",
-                "SELISIH": "SELISIH"
-            },
-            use_container_width=True,
-            hide_index=True,
-            height=1000
-        )
-
-    else:
-
+    except Exception:
         st.error("Gagal baca dataset RUP 31 Maret Tahun Berjalan")
+
+    ### Tabel INPUT RUP (PERSEN) 31 Maret
+    st.header(f"INPUT RUP (PERSEN - 31 Maret) {pilih} TAHUN {tahun}")
+
+    # persen_rup_query_31Mar = """
+    #     SELECT
+    #         df_RUPSA31Mar.nama_satker AS NAMA_SATKER,
+    #         df_RUPSA31Mar.belanja_pengadaan AS STRUKTUR_ANGGARAN,
+    #         COALESCE(SUM(df_RUPPP_umumkan_31Mar.pagu), 0) AS RUP_PENYEDIA,
+    #         COALESCE(SUM(df_RUPPS_umumkan_31Mar.pagu), 0) AS RUP_SWAKELOLA,
+    #         COALESCE(SUM(df_RUPPP_umumkan_31Mar.pagu), 0) + COALESCE(SUM(df_RUPPS_umumkan_31Mar.pagu), 0) AS TOTAL_RUP,
+    #         df_RUPSA31Mar.belanja_pengadaan - COALESCE(SUM(df_RUPPP_umumkan_31Mar.pagu), 0) - COALESCE(SUM(df_RUPPS_umumkan_31Mar.pagu), 0) AS SELISIH,
+    #         ROUND((COALESCE(SUM(df_RUPPP_umumkan_31Mar.pagu), 0) + COALESCE(SUM(df_RUPPS_umumkan_31Mar.pagu), 0)) / df_RUPSA31Mar.belanja_pengadaan * 100, 2) AS PERSEN 
+    #     FROM
+    #         df_RUPSA31Mar
+    #     LEFT JOIN
+    #         df_RUPPP_umumkan_31Mar ON df_RUPSA31Mar.nama_satker = df_RUPPP_umumkan_31Mar.nama_satker
+    #     LEFT JOIN
+    #         df_RUPPS_umumkan_31Mar ON df_RUPSA31Mar.nama_satker = df_RUPPS_umumkan_31Mar.nama_satker
+    #     WHERE
+    #         df_RUPSA31Mar.belanja_pengadaan > 0
+    #     GROUP BY
+    #         df_RUPSA31Mar.nama_satker, df_RUPSA31Mar.belanja_pengadaan       
+    # """
+    # ir_gabung_final_31Mar = con.execute(persen_rup_query_31Mar).df()
+
+    ir_strukturanggaran_31Mar = con.execute("SELECT nama_satker AS NAMA_SATKER, belanja_pengadaan AS STRUKTUR_ANGGARAN FROM df_RUPSA31Mar WHERE STRUKTUR_ANGGARAN > 0").df()
+    ir_paketpenyedia_31Mar = con.execute("SELECT nama_satker AS NAMA_SATKER, SUM(pagu) AS RUP_PENYEDIA FROM df_RUPPP_umumkan_31Mar GROUP BY NAMA_SATKER").df()
+    ir_paketswakelola_31Mar = con.execute("SELECT nama_satker AS NAMA_SATKER, SUM(pagu) AS RUP_SWAKELOLA FROM df_RUPPS_umumkan_31Mar GROUP BY NAMA_SATKER").df()   
+
+    ir_gabung_31Mar = pd.merge(pd.merge(ir_strukturanggaran_31Mar, ir_paketpenyedia_31Mar, how='left', on='NAMA_SATKER'), ir_paketswakelola_31Mar, how='left', on='NAMA_SATKER')
+    ir_gabung_totalrup_31Mar = ir_gabung_31Mar.assign(TOTAL_RUP = lambda x: x.RUP_PENYEDIA + x.RUP_SWAKELOLA)
+    ir_gabung_selisih_31Mar = ir_gabung_totalrup_31Mar.assign(SELISIH = lambda x: x.STRUKTUR_ANGGARAN - x.RUP_PENYEDIA - x.RUP_SWAKELOLA) 
+    ir_gabung_final_31Mar = ir_gabung_selisih_31Mar.assign(PERSEN = lambda x: round(((x.RUP_PENYEDIA + x.RUP_SWAKELOLA) / x.STRUKTUR_ANGGARAN * 100), 2)).fillna(0)
+
+    unduh_perseninputrup_31Mar_excel = download_excel(ir_gabung_final_31Mar)
+
+    st.download_button(
+        label = "📥 Download Data % Input RUP",
+        data = unduh_perseninputrup_31Mar_excel,
+        file_name = f"TabelPersenInputRUP31Mar-{pilih}-{tahun}.xlsx",
+        mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+
+    ### Tabel Input RUP (31 Maret)
+
+    st.dataframe(
+        ir_gabung_final_31Mar,
+        column_config={
+            "STRUKTUR_ANGGARAN": "STRUKTUR ANGGARAN",
+            "RUP_PENYEDIA": "RUP PENYEDIA",
+            "RUP_SWAKELOLA": "RUP SWAKELOLA",
+            "TOTAL_RUP": "TOTAL RUP",
+            "SELISIH": "SELISIH"
+        },
+        use_container_width=True,
+        hide_index=True,
+        height=1000
+    )
 
 style_metric_cards(background_color="#000", border_left_color="#D3D3D3")
