@@ -801,64 +801,69 @@ with menu_rup_5:
 
 with menu_rup_6:
 
-    st.header(f"INPUT RUP (PERSEN) {pilih} TAHUN {tahun}")
-
     ### Analisa Data INPUT RUP (PERSEN)
-    # persen_rup_query = """
-    #     SELECT
-    #         df_RUPSA.nama_satker AS NAMA_SATKER,
-    #         df_RUPSA.belanja_pengadaan AS STRUKTUR_ANGGARAN,
-    #         COALESCE(SUM(df_RUPPP_umumkan.pagu), 0) AS RUP_PENYEDIA,
-    #         COALESCE(SUM(df_RUPPS_umumkan.pagu), 0) AS RUP_SWAKELOLA,
-    #         COALESCE(SUM(df_RUPPP_umumkan.pagu), 0) + COALESCE(SUM(df_RUPPS_umumkan.pagu), 0) AS TOTAL_RUP,
-    #         df_RUPSA.belanja_pengadaan - COALESCE(SUM(df_RUPPP_umumkan.pagu), 0) - COALESCE(SUM(df_RUPPS_umumkan.pagu), 0) AS SELISIH,
-    #         ROUND((COALESCE(SUM(df_RUPPP_umumkan.pagu), 0) + COALESCE(SUM(df_RUPPS_umumkan.pagu), 0)) / df_RUPSA.belanja_pengadaan * 100, 2) AS PERSEN
-    #     FROM
-    #         df_RUPSA
-    #     LEFT JOIN
-    #         df_RUPPP_umumkan ON df_RUPSA.nama_satker = df_RUPPP_umumkan.nama_satker
-    #     LEFT JOIN
-    #         df_RUPPS_umumkan ON df_RUPSA.nama_satker = df_RUPPS_umumkan.nama_satker
-    #     WHERE
-    #         df_RUPSA.belanja_pengadaan > 0
-    #     GROUP BY
-    #         df_RUPSA.nama_satker, df_RUPSA.belanja_pengadaan       
-    # """
-    # ir_gabung_final = con.execute(persen_rup_query).df()
+    try:
+        #### Baca file parquet dataset RUP Tahun Berjalan
+        st.header(f"INPUT RUP (PERSEN) {pilih} TAHUN {tahun}")
 
-    ir_strukturanggaran = con.execute("SELECT nama_satker AS NAMA_SATKER, belanja_pengadaan AS STRUKTUR_ANGGARAN FROM df_RUPSA WHERE STRUKTUR_ANGGARAN > 0").df()
-    ir_paketpenyedia = con.execute("SELECT nama_satker AS NAMA_SATKER, SUM(pagu) AS RUP_PENYEDIA FROM df_RUPPP_umumkan GROUP BY NAMA_SATKER").df()
-    ir_paketswakelola = con.execute("SELECT nama_satker AS NAMA_SATKER, SUM(pagu) AS RUP_SWAKELOLA FROM df_RUPPS_umumkan GROUP BY NAMA_SATKER").df()   
+        # persen_rup_query = """
+        #     SELECT
+        #         df_RUPSA.nama_satker AS NAMA_SATKER,
+        #         df_RUPSA.belanja_pengadaan AS STRUKTUR_ANGGARAN,
+        #         COALESCE(SUM(df_RUPPP_umumkan.pagu), 0) AS RUP_PENYEDIA,
+        #         COALESCE(SUM(df_RUPPS_umumkan.pagu), 0) AS RUP_SWAKELOLA,
+        #         COALESCE(SUM(df_RUPPP_umumkan.pagu), 0) + COALESCE(SUM(df_RUPPS_umumkan.pagu), 0) AS TOTAL_RUP,
+        #         df_RUPSA.belanja_pengadaan - COALESCE(SUM(df_RUPPP_umumkan.pagu), 0) - COALESCE(SUM(df_RUPPS_umumkan.pagu), 0) AS SELISIH,
+        #         ROUND((COALESCE(SUM(df_RUPPP_umumkan.pagu), 0) + COALESCE(SUM(df_RUPPS_umumkan.pagu), 0)) / df_RUPSA.belanja_pengadaan * 100, 2) AS PERSEN
+        #     FROM
+        #         df_RUPSA
+        #     LEFT JOIN
+        #         df_RUPPP_umumkan ON df_RUPSA.nama_satker = df_RUPPP_umumkan.nama_satker
+        #     LEFT JOIN
+        #         df_RUPPS_umumkan ON df_RUPSA.nama_satker = df_RUPPS_umumkan.nama_satker
+        #     WHERE
+        #         df_RUPSA.belanja_pengadaan > 0
+        #     GROUP BY
+        #         df_RUPSA.nama_satker, df_RUPSA.belanja_pengadaan       
+        # """
+        # ir_gabung_final = con.execute(persen_rup_query).df()
 
-    ir_gabung = pd.merge(pd.merge(ir_strukturanggaran, ir_paketpenyedia, how='left', on='NAMA_SATKER'), ir_paketswakelola, how='left', on='NAMA_SATKER')
-    ir_gabung_totalrup = ir_gabung.assign(TOTAL_RUP = lambda x: x.RUP_PENYEDIA + x.RUP_SWAKELOLA)
-    ir_gabung_selisih = ir_gabung_totalrup.assign(SELISIH = lambda x: x.STRUKTUR_ANGGARAN - x.RUP_PENYEDIA - x.RUP_SWAKELOLA) 
-    ir_gabung_final = ir_gabung_selisih.assign(PERSEN = lambda x: round(((x.RUP_PENYEDIA + x.RUP_SWAKELOLA) / x.STRUKTUR_ANGGARAN * 100), 2)).fillna(0)
+        ir_strukturanggaran = con.execute("SELECT nama_satker AS NAMA_SATKER, belanja_pengadaan AS STRUKTUR_ANGGARAN FROM df_RUPSA WHERE STRUKTUR_ANGGARAN > 0").df()
+        ir_paketpenyedia = con.execute("SELECT nama_satker AS NAMA_SATKER, SUM(pagu) AS RUP_PENYEDIA FROM df_RUPPP_umumkan GROUP BY NAMA_SATKER").df()
+        ir_paketswakelola = con.execute("SELECT nama_satker AS NAMA_SATKER, SUM(pagu) AS RUP_SWAKELOLA FROM df_RUPPS_umumkan GROUP BY NAMA_SATKER").df()   
 
-    unduh_perseninputrup_excel = download_excel(ir_gabung_final)
+        ir_gabung = pd.merge(pd.merge(ir_strukturanggaran, ir_paketpenyedia, how='left', on='NAMA_SATKER'), ir_paketswakelola, how='left', on='NAMA_SATKER')
+        ir_gabung_totalrup = ir_gabung.assign(TOTAL_RUP = lambda x: x.RUP_PENYEDIA + x.RUP_SWAKELOLA)
+        ir_gabung_selisih = ir_gabung_totalrup.assign(SELISIH = lambda x: x.STRUKTUR_ANGGARAN - x.RUP_PENYEDIA - x.RUP_SWAKELOLA) 
+        ir_gabung_final = ir_gabung_selisih.assign(PERSEN = lambda x: round(((x.RUP_PENYEDIA + x.RUP_SWAKELOLA) / x.STRUKTUR_ANGGARAN * 100), 2)).fillna(0)
 
-    st.download_button(
-        label = "📥 Download Data % Input RUP",
-        data = unduh_perseninputrup_excel,
-        file_name = f"TabelPersenInputRUP-{pilih}-{tahun}.xlsx",
-        mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
+        unduh_perseninputrup_excel = download_excel(ir_gabung_final)
 
-    ### Tabel INPUT RUP (PERSEN)
+        st.download_button(
+            label = "📥 Download Data % Input RUP",
+            data = unduh_perseninputrup_excel,
+            file_name = f"TabelPersenInputRUP-{pilih}-{tahun}.xlsx",
+            mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
 
-    st.dataframe(
-        ir_gabung_final,
-        column_config={
-            "STRUKTUR_ANGGARAN": "STRUKTUR ANGGARAN",
-            "RUP_PENYEDIA": "RUP PENYEDIA",
-            "RUP_SWAKELOLA": "RUP SWAKELOLA",
-            "TOTAL_RUP": "TOTAL RUP",
-            "SELISIH": "SELISIH"
-        },
-        use_container_width=True,
-        hide_index=True,
-        height=1000
-    )
+        ### Tabel INPUT RUP (PERSEN)
+
+        st.dataframe(
+            ir_gabung_final,
+            column_config={
+                "STRUKTUR_ANGGARAN": "STRUKTUR ANGGARAN",
+                "RUP_PENYEDIA": "RUP PENYEDIA",
+                "RUP_SWAKELOLA": "RUP SWAKELOLA",
+                "TOTAL_RUP": "TOTAL RUP",
+                "SELISIH": "SELISIH"
+            },
+            use_container_width=True,
+            hide_index=True,
+            height=1000
+        )
+
+    except Exception:
+        st.error("Gagal baca dataset RUP Tahun Berjalan")
 
 with menu_rup_7:
 
