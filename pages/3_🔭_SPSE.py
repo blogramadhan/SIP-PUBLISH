@@ -136,8 +136,9 @@ with menu_spse_1:
 
             SPSE_radio_1, SPSE_radio_2, SPSE_radio_3 = st.columns((1,1,8))
             with SPSE_radio_1:
-                sumber_dana_unik = df_SPSETenderPengumuman['sumber_dana'].unique()
-                sumber_dana = st.radio("**Sumber Dana**", sumber_dana_unik, key="Sumber_Dana_Tender_pengumuman")
+                sumber_dana_unik_array = df_SPSETenderPengumuman['sumber_dana'].unique()
+                sumber_dana_unik_array_ok = np.insert(sumber_dana_unik_array, 0, "Gabungan")
+                sumber_dana = st.radio("**Sumber Dana**", sumber_dana_unik_array_ok, key="Sumber_Dana_Tender_pengumuman")
             with SPSE_radio_2:
                 status_tender_unik_array = df_SPSETenderPengumuman['status_tender'].unique()
                 status_tender_unik_array_ok = np.insert(status_tender_unik_array, 0, "Gabungan")
