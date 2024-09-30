@@ -120,27 +120,36 @@ with menu_monitoring_1:
 
     st.divider()
 
+    ### Query RUP
+    RUPPP_umumkan_sql = f"SELECT * FROM df_RUPPP WHERE status_umumkan_rup = 'Terumumkan' AND status_aktif_rup = 'TRUE' AND metode_pengadaan <> '0'"
+    RUPPS_umumkan_sql = f"""
+        SELECT nama_satker, kd_rup, nama_paket, pagu, tipe_swakelola, volume_pekerjaan, uraian_pekerjaan, 
+        tgl_pengumuman_paket, tgl_awal_pelaksanaan_kontrak, nama_ppk, status_umumkan_rup
+        FROM df_RUPPS
+        WHERE status_umumkan_rup = 'Terumumkan'
+    """
+    RUPSA_umumkan_sql = f"SELECT * FROM df_RUPSA WHERE 1=1"
+
+    SPSETenderPengumuman_sql = f"SELECT kd_tender, pagu, hps FROM df_SPSETenderPengumuman WHERE status_tender = 'Selesai'"
+    RUPPP_umumkan_etendering_sql = f"SELECT pagu FROM df_RUPPP_umumkan WHERE metode_pengadaan IN ('Tender', 'Tender Cepat', 'Seleksi')"
+
+    if nama_satker != "SEMUA PERANGKAT DAERAH":
+        RUPPP_umumkan_sql += f" AND nama_satker = '{nama_satker}'" 
+        RUPPS_umumkan_sql += f" AND nama_satker = '{nama_satker}'"
+        RUPSA_umumkan_sql += f" AND nama_satker = '{nama_satker}'"
+
+        SPSETenderPengumuman_sql += f" AND nama_satker = '{nama_satker}'"
+        RUPPP_umumkan_etendering_sql += f" AND nama_satker = '{nama_satker}'"
+
+    df_RUPPP_umumkan = con.execute(RUPPP_umumkan_sql).df()
+    df_RUPPS_umumkan = con.execute(RUPPS_umumkan_sql).df()
+    df_RUPSA_umumkan = con.execute(RUPSA_umumkan_sql).df()
+
+    df_SPSETenderPengumuman = con.execute(SPSETenderPengumuman_sql).df()
+    df_RUPPP_umumkan_etendering = con.execute(RUPPP_umumkan_etendering_sql).df()
+
     ## Prediksi ITKP RUP
     try:
-        ### Query RUP
-        RUPPP_umumkan_sql = f"SELECT * FROM df_RUPPP WHERE status_umumkan_rup = 'Terumumkan' AND status_aktif_rup = 'TRUE' AND metode_pengadaan <> '0'"
-        RUPPS_umumkan_sql = f"""
-            SELECT nama_satker, kd_rup, nama_paket, pagu, tipe_swakelola, volume_pekerjaan, uraian_pekerjaan, 
-            tgl_pengumuman_paket, tgl_awal_pelaksanaan_kontrak, nama_ppk, status_umumkan_rup
-            FROM df_RUPPS
-            WHERE status_umumkan_rup = 'Terumumkan'
-        """
-        RUPSA_umumkan_sql = f"SELECT * FROM df_RUPSA WHERE 1=1"
-
-        if nama_satker != "SEMUA PERANGKAT DAERAH":
-            RUPPP_umumkan_sql += f" AND nama_satker = '{nama_satker}'" 
-            RUPPS_umumkan_sql += f" AND nama_satker = '{nama_satker}'"
-            RUPSA_umumkan_sql += f" AND nama_satker = '{nama_satker}'"
-
-        df_RUPPP_umumkan = con.execute(RUPPP_umumkan_sql).df()
-        df_RUPPS_umumkan = con.execute(RUPPS_umumkan_sql).df()
-        df_RUPSA_umumkan = con.execute(RUPSA_umumkan_sql).df()
-
         belanja_pengadaan = df_RUPSA_umumkan['belanja_pengadaan'].sum()
         nilai_total_rup = df_RUPPP_umumkan['pagu'].sum() + df_RUPPS_umumkan['pagu'].sum()
         persen_capaian_rup = nilai_total_rup / belanja_pengadaan
@@ -164,15 +173,12 @@ with menu_monitoring_1:
 
     ## Prediksi ITKP E-Tendering
     try:
-        ### Baca file Parquet E-Tendering
-        # df_SPSETenderPengumuman = tarik_data_parquet(DatasetSPSETenderPengumuman)
-        
         ### Query E-Tendering
-        df_SPSETenderPengumuman_filter = con.execute("SELECT kd_tender, pagu, hps FROM df_SPSETenderPengumuman WHERE status_tender = 'Selesai'").df()
-        df_RUPPP_umumkan_etendering = con.execute("SELECT pagu FROM df_RUPPP_umumkan WHERE metode_pengadaan IN ('Tender', 'Tender Cepat', 'Seleksi')").df()
+        # df_SPSETenderPengumuman_filter = con.execute("SELECT kd_tender, pagu, hps FROM df_SPSETenderPengumuman WHERE status_tender = 'Selesai'").df()
+        # df_RUPPP_umumkan_etendering = con.execute("SELECT pagu FROM df_RUPPP_umumkan WHERE metode_pengadaan IN ('Tender', 'Tender Cepat', 'Seleksi')").df()
 
         nilai_etendering_rup = df_RUPPP_umumkan_etendering['pagu'].sum()
-        nilai_etendering_spse = df_SPSETenderPengumuman_filter['pagu'].sum()
+        nilai_etendering_spse = df_SPSETenderPengumuman['pagu'].sum()
         persen_capaian_etendering = nilai_etendering_spse / nilai_etendering_rup
         if persen_capaian_etendering > 1:
             prediksi_itkp_etendering = (1 - (persen_capaian_etendering - 1)) * 5
