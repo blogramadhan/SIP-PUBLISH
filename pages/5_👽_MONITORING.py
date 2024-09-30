@@ -136,6 +136,8 @@ with menu_monitoring_1:
     SPSENonTenderPengumuman_sql = f"SELECT pagu, hps FROM df_SPSENonTenderPengumuman WHERE status_nontender = 'Selesai'"
     RUPPP_umumkan_nonetendering_sql = f"SELECT pagu FROM df_RUPPP_umumkan WHERE metode_pengadaan IN ('Pengadaan Langsung', 'Penunjukan Langsung')"
 
+    SPSETenderKontrak_sql = f"SELECT kd_tender FROM df_SPSETenderKontrak WHERE 1=1"
+
     if nama_satker != "SEMUA PERANGKAT DAERAH":
         RUPPP_umumkan_sql += f" AND nama_satker = '{nama_satker}'" 
         RUPPS_umumkan_sql += f" AND nama_satker = '{nama_satker}'"
@@ -147,6 +149,8 @@ with menu_monitoring_1:
         SPSENonTenderPengumuman_sql += f" AND nama_satker = '{nama_satker}'"
         RUPPP_umumkan_nonetendering_sql += f" AND nama_satker = '{nama_satker}'"
 
+        SPSETenderKontrak_sql += f" AND nama_satker = '{nama_satker}'" 
+
     df_RUPPP_umumkan = con.execute(RUPPP_umumkan_sql).df()
     df_RUPPS_umumkan = con.execute(RUPPS_umumkan_sql).df()
     df_RUPSA_umumkan = con.execute(RUPSA_umumkan_sql).df()
@@ -156,6 +160,8 @@ with menu_monitoring_1:
 
     df_SPSENonTenderPengumuman = con.execute(SPSENonTenderPengumuman_sql).df()
     df_RUPPP_umumkan_nonetendering = con.execute(RUPPP_umumkan_nonetendering_sql).df()
+
+    df_SPSETenderKontrak = con.execute(SPSETenderKontrak_sql).df()
 
     ## Prediksi ITKP RUP
     try:
@@ -228,13 +234,8 @@ with menu_monitoring_1:
 
     ## Prediksi ITKP E-KONTRAK
     try:
-        ### Baca file Parquet E-Kontrak
-        # df_SPSETenderKontrak = tarik_data_parquet(DatasetSPSETenderKontrak)
-        df_SPSETenderKontrak_filter = con.execute("SELECT kd_tender FROM df_SPSETenderKontrak").df()
-
-        ### Query E-Kontrak
-        jumlah_tender_selesai = df_SPSETenderPengumuman_filter['kd_tender'].count()
-        jumlah_tender_kontrak = df_SPSETenderKontrak_filter['kd_tender'].count()
+        jumlah_tender_selesai = df_SPSETenderPengumuman['kd_tender'].count()
+        jumlah_tender_kontrak = df_SPSETenderKontrak['kd_tender'].count()
         persen_capaian_ekontrak = jumlah_tender_kontrak / jumlah_tender_selesai
         if persen_capaian_ekontrak > 1:
             prediksi_itkp_ekontrak = (1 - (persen_capaian_ekontrak - 1)) * 5
