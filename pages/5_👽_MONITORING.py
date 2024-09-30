@@ -86,6 +86,19 @@ DatasetSIKAPNonTender = f"https://data.pbj.my.id/{kodeRUP}/sikap/SiKAP-Penilaian
 DatasetPURCHASINGECAT = f"https://data.pbj.my.id/{kodeRUP}/epurchasing/Ecat-PaketEPurchasing{tahun}.parquet"
 DatasetPURCHASINGBELA = f"https://data.pbj.my.id/{kodeRUP}/epurchasing/Bela-TokoDaringRealisasi{tahun}.parquet"
 
+## Baca file parquet
+try:
+    df_RUPPP = tarik_data_parquet(DatasetRUPPP)
+    df_RUPPS = tarik_data_parquet(DatasetRUPPS)
+    df_RUPSA = tarik_data_parquet(DatasetRUPSA)
+    df_SPSETenderPengumuman = tarik_data_parquet(DatasetSPSETenderPengumuman)
+    df_SPSENonTenderPengumuman = tarik_data_parquet(DatasetSPSENonTenderPengumuman)
+    df_SPSETenderKontrak = tarik_data_parquet(DatasetSPSETenderKontrak)
+    df_ECAT = tarik_data_parquet(DatasetPURCHASINGECAT)
+
+except Exception:
+    st.error("Gagal Baca data Monitoring ITKP")
+
 #####
 # Presentasi Monitoring dan SIKAP
 #####
@@ -99,25 +112,39 @@ with menu_monitoring_1:
     st.header(f"PREDIKSI ITKP PEMANFAATAN SISTEM PENGADAAN - {pilih} - TAHUN {tahun}")
     st.divider()
 
+    nama_satker_unik_array = df_RUPPP['nama_satker'].unique()
+    nama_satker_unik_array_ok = np.insert(nama_satker_unik_array, 0, "Semua Perangkat Daerah")
+    nama_satker = st.selectbox("Pilih Perangkat Daerah :", nama_satker_unik_array_ok, key="Nama_Satker_Monitoring")
+
+    st.divider()
+
     ## Prediksi ITKP RUP
     try:
         ### Baca file parquet RUP
-        df_RUPPP = tarik_data_parquet(DatasetRUPPP)
-        df_RUPPS = tarik_data_parquet(DatasetRUPPS)
-        df_RUPSA = tarik_data_parquet(DatasetRUPSA)
+        # df_RUPPP = tarik_data_parquet(DatasetRUPPP)
+        # df_RUPPS = tarik_data_parquet(DatasetRUPPS)
+        # df_RUPSA = tarik_data_parquet(DatasetRUPSA)
 
         ### Query RUP
-        df_RUPPP_umumkan = con.execute("SELECT * FROM df_RUPPP WHERE status_umumkan_rup = 'Terumumkan' AND status_aktif_rup = 'TRUE' AND metode_pengadaan <> '0'").df()
-
-        RUPPS_umumkan_sql = """
+        RUPPP_umumkan_sql = f"SELECT * FROM df_RUPPP WHERE status_umumkan_rup = 'Terumumkan' AND status_aktif_rup = 'TRUE' AND metode_pengadaan <> '0'"
+        RUPPS_umumkan_sql = f"""
             SELECT nama_satker, kd_rup, nama_paket, pagu, tipe_swakelola, volume_pekerjaan, uraian_pekerjaan, 
             tgl_pengumuman_paket, tgl_awal_pelaksanaan_kontrak, nama_ppk, status_umumkan_rup
             FROM df_RUPPS
             WHERE status_umumkan_rup = 'Terumumkan'
         """
-        df_RUPPS_umumkan = con.execute(RUPPS_umumkan_sql).df()
+        RUPSA_umumkan_sql = f"SELECT * FROM df_RUPSA WHERE 1=1"
 
-        belanja_pengadaan = df_RUPSA['belanja_pengadaan'].sum()
+        if nama_satker != "Semua Perangkat Daerah":
+            RUPPP_umumkan_sql += f" AND nama_satker = '{nama_satker}'" 
+            RUPPS_umumkan_sql += f" AND nama_satker = '{nama_satker}'"
+            RUPSA_umumkan_sql += f" AND nama_satker = '{nama_satker}'"
+
+        df_RUPPP_umumkan = con.execute(RUPPP_umumkan_sql).df()
+        df_RUPPS_umumkan = con.execute(RUPPS_umumkan_sql).df()
+        df_RUPSA_umumkan = con.execute(RUPSA_umumkan_sql).df()
+
+        belanja_pengadaan = df_RUPSA_umumkan['belanja_pengadaan'].sum()
         nilai_total_rup = df_RUPPP_umumkan['pagu'].sum() + df_RUPPS_umumkan['pagu'].sum()
         persen_capaian_rup = nilai_total_rup / belanja_pengadaan
         if persen_capaian_rup > 1:
@@ -141,7 +168,7 @@ with menu_monitoring_1:
     ## Prediksi ITKP E-Tendering
     try:
         ### Baca file Parquet E-Tendering
-        df_SPSETenderPengumuman = tarik_data_parquet(DatasetSPSETenderPengumuman)
+        # df_SPSETenderPengumuman = tarik_data_parquet(DatasetSPSETenderPengumuman)
         
         ### Query E-Tendering
         df_SPSETenderPengumuman_filter = con.execute("SELECT kd_tender, pagu, hps FROM df_SPSETenderPengumuman WHERE status_tender = 'Selesai'").df()
@@ -171,7 +198,7 @@ with menu_monitoring_1:
     ## Prediksi ITKP Non E-Tendering
     try:
         ### Baca file Parquet Non E-Tendering
-        df_SPSENonTenderPengumuman = tarik_data_parquet(DatasetSPSENonTenderPengumuman)
+        # df_SPSENonTenderPengumuman = tarik_data_parquet(DatasetSPSENonTenderPengumuman)
 
         ### Query Non E-Tendering
         df_SPSENonTenderPengumuman_filter = con.execute("SELECT pagu, hps FROM df_SPSENonTenderPengumuman WHERE status_nontender = 'Selesai'").df()
@@ -201,7 +228,7 @@ with menu_monitoring_1:
     ## Prediksi ITKP E-KONTRAK
     try:
         ### Baca file Parquet E-Kontrak
-        df_SPSETenderKontrak = tarik_data_parquet(DatasetSPSETenderKontrak)
+        # df_SPSETenderKontrak = tarik_data_parquet(DatasetSPSETenderKontrak)
         df_SPSETenderKontrak_filter = con.execute("SELECT kd_tender FROM df_SPSETenderKontrak").df()
 
         ### Query E-Kontrak
@@ -229,7 +256,7 @@ with menu_monitoring_1:
     ## Prediksi ITKP E-KATALOG
     try:
         ### Baca file Parquet E-Katalog
-        df_ECAT = tarik_data_parquet(DatasetPURCHASINGECAT)
+        # df_ECAT = tarik_data_parquet(DatasetPURCHASINGECAT)
         df_ECAT_filter = df_ECAT[df_ECAT['paket_status_str'] == 'Paket Selesai']
 
         ### Query E-Katalog
