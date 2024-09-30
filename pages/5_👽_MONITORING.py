@@ -116,15 +116,12 @@ with menu_monitoring_1:
     nama_satker_unik_array_ok = np.insert(nama_satker_unik_array, 0, "Semua Perangkat Daerah")
     nama_satker = st.selectbox("Pilih Perangkat Daerah :", nama_satker_unik_array_ok, key="Nama_Satker_Monitoring")
 
+    st.subheader(f"{nama_satker}")
+
     st.divider()
 
     ## Prediksi ITKP RUP
     try:
-        ### Baca file parquet RUP
-        # df_RUPPP = tarik_data_parquet(DatasetRUPPP)
-        # df_RUPPS = tarik_data_parquet(DatasetRUPPS)
-        # df_RUPSA = tarik_data_parquet(DatasetRUPSA)
-
         ### Query RUP
         RUPPP_umumkan_sql = f"SELECT * FROM df_RUPPP WHERE status_umumkan_rup = 'Terumumkan' AND status_aktif_rup = 'TRUE' AND metode_pengadaan <> '0'"
         RUPPS_umumkan_sql = f"""
