@@ -133,6 +133,9 @@ with menu_monitoring_1:
     SPSETenderPengumuman_sql = f"SELECT kd_tender, pagu, hps FROM df_SPSETenderPengumuman WHERE status_tender = 'Selesai'"
     RUPPP_umumkan_etendering_sql = f"SELECT pagu FROM df_RUPPP_umumkan WHERE metode_pengadaan IN ('Tender', 'Tender Cepat', 'Seleksi')"
 
+    SPSENonTenderPengumuman_sql = f"SELECT pagu, hps FROM df_SPSENonTenderPengumuman WHERE status_nontender = 'Selesai'"
+    RUPPP_umumkan_nonetendering_sql = f"SELECT pagu FROM df_RUPPP_umumkan WHERE metode_pengadaan IN ('Pengadaan Langsung', 'Penunjukan Langsung')"
+
     if nama_satker != "SEMUA PERANGKAT DAERAH":
         RUPPP_umumkan_sql += f" AND nama_satker = '{nama_satker}'" 
         RUPPS_umumkan_sql += f" AND nama_satker = '{nama_satker}'"
@@ -141,12 +144,18 @@ with menu_monitoring_1:
         SPSETenderPengumuman_sql += f" AND nama_satker = '{nama_satker}'"
         RUPPP_umumkan_etendering_sql += f" AND nama_satker = '{nama_satker}'"
 
+        SPSENonTenderPengumuman_sql += f" AND nama_satker = '{nama_satker}'"
+        RUPPP_umumkan_nonetendering_sql += f" AND nama_satker = '{nama_satker}'"
+
     df_RUPPP_umumkan = con.execute(RUPPP_umumkan_sql).df()
     df_RUPPS_umumkan = con.execute(RUPPS_umumkan_sql).df()
     df_RUPSA_umumkan = con.execute(RUPSA_umumkan_sql).df()
 
     df_SPSETenderPengumuman = con.execute(SPSETenderPengumuman_sql).df()
     df_RUPPP_umumkan_etendering = con.execute(RUPPP_umumkan_etendering_sql).df()
+
+    df_SPSENonTenderPengumuman = con.execute(SPSENonTenderPengumuman_sql).df()
+    df_RUPPP_umumkan_nonetendering = con.execute(RUPPP_umumkan_nonetendering_sql).df()
 
     ## Prediksi ITKP RUP
     try:
@@ -173,10 +182,6 @@ with menu_monitoring_1:
 
     ## Prediksi ITKP E-Tendering
     try:
-        ### Query E-Tendering
-        # df_SPSETenderPengumuman_filter = con.execute("SELECT kd_tender, pagu, hps FROM df_SPSETenderPengumuman WHERE status_tender = 'Selesai'").df()
-        # df_RUPPP_umumkan_etendering = con.execute("SELECT pagu FROM df_RUPPP_umumkan WHERE metode_pengadaan IN ('Tender', 'Tender Cepat', 'Seleksi')").df()
-
         nilai_etendering_rup = df_RUPPP_umumkan_etendering['pagu'].sum()
         nilai_etendering_spse = df_SPSETenderPengumuman['pagu'].sum()
         persen_capaian_etendering = nilai_etendering_spse / nilai_etendering_rup
@@ -200,15 +205,8 @@ with menu_monitoring_1:
 
     ## Prediksi ITKP Non E-Tendering
     try:
-        ### Baca file Parquet Non E-Tendering
-        # df_SPSENonTenderPengumuman = tarik_data_parquet(DatasetSPSENonTenderPengumuman)
-
-        ### Query Non E-Tendering
-        df_SPSENonTenderPengumuman_filter = con.execute("SELECT pagu, hps FROM df_SPSENonTenderPengumuman WHERE status_nontender = 'Selesai'").df()
-        df_RUPPP_umumkan_nonetendering = con.execute("SELECT pagu FROM df_RUPPP_umumkan WHERE metode_pengadaan IN ('Pengadaan Langsung', 'Penunjukan Langsung')").df()
-
         nilai_nonetendering_rup = df_RUPPP_umumkan_nonetendering['pagu'].sum()
-        nilai_nonetendering_spse = df_SPSENonTenderPengumuman_filter['pagu'].sum()
+        nilai_nonetendering_spse = df_SPSENonTenderPengumuman['pagu'].sum()
         persen_capaian_nonetendering = nilai_nonetendering_spse / nilai_nonetendering_rup
         if persen_capaian_nonetendering > 1:
             prediksi_itkp_nonetendering = (1 - (persen_capaian_nonetendering - 1)) * 5
