@@ -113,7 +113,7 @@ with menu_monitoring_1:
     st.divider()
 
     nama_satker_unik_array = df_RUPPP['nama_satker'].unique()
-    nama_satker_unik_array_ok = np.insert(nama_satker_unik_array, 0, "Semua Perangkat Daerah")
+    nama_satker_unik_array_ok = np.insert(nama_satker_unik_array, 0, "SEMUA PERANGKAT DAERAH")
     nama_satker = st.selectbox("Pilih Perangkat Daerah :", nama_satker_unik_array_ok, key="Nama_Satker_Monitoring")
 
     st.subheader(f"{nama_satker}")
@@ -132,7 +132,7 @@ with menu_monitoring_1:
         """
         RUPSA_umumkan_sql = f"SELECT * FROM df_RUPSA WHERE 1=1"
 
-        if nama_satker != "Semua Perangkat Daerah":
+        if nama_satker != "SEMUA PERANGKAT DAERAH":
             RUPPP_umumkan_sql += f" AND nama_satker = '{nama_satker}'" 
             RUPPS_umumkan_sql += f" AND nama_satker = '{nama_satker}'"
             RUPSA_umumkan_sql += f" AND nama_satker = '{nama_satker}'"
