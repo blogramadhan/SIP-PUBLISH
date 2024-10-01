@@ -98,6 +98,7 @@ try:
     df_ECAT0 = tarik_data_parquet(DatasetPURCHASINGECAT).drop('nama_satker', axis=1)
     df_ECAT1 = tarik_data_parquet(DatasetPURCHASINGECATIS)
     df_ECAT = pd.merge(df_ECAT0, df_ECAT1, left_on='satker_id', right_on='kd_satker', how='left')
+    df_BELA = tarik_data_parquet(DatasetPURCHASINGBELA)
 
 except Exception:
     st.error("Gagal Baca data Monitoring ITKP")
@@ -144,6 +145,8 @@ with menu_monitoring_1:
     ECAT_sql = f"SELECT * FROM df_ECAT WHERE 1=1"
     ECATSelesai_sql = f"SELECT * FROM df_ECAT WHERE paket_status_str = 'Paket Selesai'"
 
+    BELA_sql = f"SELECT nama_satker, valuasi FROM df_BELA WHERE status_verif = 'verified' AND status_konfirmasi_ppmse = 'selesai'"
+
     if nama_satker != "SEMUA PERANGKAT DAERAH":
         RUPPP_umumkan_sql += f" AND nama_satker = '{nama_satker}'" 
         RUPPS_umumkan_sql += f" AND nama_satker = '{nama_satker}'"
@@ -160,6 +163,8 @@ with menu_monitoring_1:
         ECAT_sql += f" AND nama_satker = '{nama_satker}'"
         ECATSelesai_sql += f" AND nama_satker = '{nama_satker}'"
 
+        BELA_sql += f" AND nama_satker = '{nama_satker}'"
+
     df_RUPPP_umumkan = con.execute(RUPPP_umumkan_sql).df()
     df_RUPPS_umumkan = con.execute(RUPPS_umumkan_sql).df()
     df_RUPSA_umumkan = con.execute(RUPSA_umumkan_sql).df()
@@ -174,6 +179,8 @@ with menu_monitoring_1:
 
     df_ECATOK = con.execute(ECAT_sql).df()
     df_ECATSelesai = con.execute(ECATSelesai_sql).df()
+
+    df_BELAOK = con.execute(BELA_sql).df()
 
     ##########
 
@@ -285,28 +292,21 @@ with menu_monitoring_1:
     ##########
 
     ## Prediksi ITKP TOKO DARING
-    try:
-        ### Baca file Parquet Toko Daring
-        df_BELA = tarik_data_parquet(DatasetPURCHASINGBELA)
-        df_BELA_filter = con.execute("SELECT valuasi FROM df_BELA WHERE nama_satker IS NOT NULL AND status_verif = 'verified' AND status_konfirmasi_ppmse = 'selesai'").df()
 
-        ### Query Toko Daring
-        jumlah_trx_bela = df_BELA_filter['valuasi'].count()
-        nilai_trx_bela = df_BELA_filter['valuasi'].sum()
-        if jumlah_trx_bela >= 1:
-            prediksi_itkp_bela = 1
-        else:
-            prediksi_itkp_bela = 0
+    ### Query Toko Daring
+    jumlah_trx_bela = df_BELAOK['valuasi'].count()
+    nilai_trx_bela = df_BELAOK['valuasi'].sum()
+    if jumlah_trx_bela >= 1:
+        prediksi_itkp_bela = 1
+    else:
+        prediksi_itkp_bela = 0
 
-        ### Tampilan Prediksi Toko Daring
-        st.subheader("**TOKO DARING**")
-        itkp_bela_1, itkp_bela_2, itkp_bela_3 = st.columns(3)
-        itkp_bela_1.metric(label="JUMLAH TRANSAKSI TOKO DARING", value="{:,}".format(jumlah_trx_bela))
-        itkp_bela_2.metric(label="NILAI TRANSAKSI TOKO DARING", value="{:,.2f}".format(nilai_trx_bela))
-        itkp_bela_3.metric(label="NILAI PREDIKSI (DARI 1)", value="{:,}".format(round(prediksi_itkp_bela, 2)))
-
-    except Exception:
-        st.error("Gagal Analisa Prediksi ITKP TOKO DARING")
+    ### Tampilan Prediksi Toko Daring
+    st.subheader("**TOKO DARING**")
+    itkp_bela_1, itkp_bela_2, itkp_bela_3 = st.columns(3)
+    itkp_bela_1.metric(label="JUMLAH TRANSAKSI TOKO DARING", value="{:,}".format(jumlah_trx_bela))
+    itkp_bela_2.metric(label="NILAI TRANSAKSI TOKO DARING", value="{:,.2f}".format(nilai_trx_bela))
+    itkp_bela_3.metric(label="NILAI PREDIKSI (DARI 1)", value="{:,}".format(round(prediksi_itkp_bela, 2)))
 
 ## Tab menu monitoring SIKAP
 with menu_monitoring_2:
