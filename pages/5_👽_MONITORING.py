@@ -84,6 +84,7 @@ DatasetSIKAPNonTender = f"https://data.pbj.my.id/{kodeRUP}/sikap/SiKAP-Penilaian
 
 ### Dataset E-Purchasing (Katalog dan Toko Daring)
 DatasetPURCHASINGECAT = f"https://data.pbj.my.id/{kodeRUP}/epurchasing/Ecat-PaketEPurchasing{tahun}.parquet"
+DatasetPURCHASINGECATIS = f"https://data.pbj.my.id/{kodeRUP}/epurchasing/Ecat-InstansiSatker.parquet"
 DatasetPURCHASINGBELA = f"https://data.pbj.my.id/{kodeRUP}/epurchasing/Bela-TokoDaringRealisasi{tahun}.parquet"
 
 ## Baca file parquet
@@ -94,7 +95,9 @@ try:
     df_SPSETenderPengumuman = tarik_data_parquet(DatasetSPSETenderPengumuman)
     df_SPSENonTenderPengumuman = tarik_data_parquet(DatasetSPSENonTenderPengumuman)
     df_SPSETenderKontrak = tarik_data_parquet(DatasetSPSETenderKontrak)
-    df_ECAT = tarik_data_parquet(DatasetPURCHASINGECAT)
+    df_ECAT0 = tarik_data_parquet(DatasetPURCHASINGECAT).drop('nama_satker', axis=1)
+    df_ECAT1 = tarik_data_parquet(DatasetPURCHASINGECATIS)
+    df_ECAT = pd.merge(df_ECAT0, df_ECAT1, left_on='satker_id', right_on='kd_satker', how='left')
 
 except Exception:
     st.error("Gagal Baca data Monitoring ITKP")
