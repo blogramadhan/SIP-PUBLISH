@@ -138,6 +138,9 @@ with menu_monitoring_1:
 
     SPSETenderKontrak_sql = f"SELECT kd_tender FROM df_SPSETenderKontrak WHERE 1=1"
 
+    ECAT_sql = f"SELECT * FROM df_ECAT WHERE 1=1"
+    ECATSelesai_sql = f"SELECT * FROM df_ECAT WHERE paket_status_str = 'Paket Selesai'"
+
     if nama_satker != "SEMUA PERANGKAT DAERAH":
         RUPPP_umumkan_sql += f" AND nama_satker = '{nama_satker}'" 
         RUPPS_umumkan_sql += f" AND nama_satker = '{nama_satker}'"
@@ -151,6 +154,9 @@ with menu_monitoring_1:
 
         SPSETenderKontrak_sql += f" AND nama_satker = '{nama_satker}'" 
 
+        ECAT_sql += f" AND nama_satker = '{nama_satker}'"
+        ECATSelesai_sql += f" AND nama_satker = '{nama_satker}'"
+
     df_RUPPP_umumkan = con.execute(RUPPP_umumkan_sql).df()
     df_RUPPS_umumkan = con.execute(RUPPS_umumkan_sql).df()
     df_RUPSA_umumkan = con.execute(RUPSA_umumkan_sql).df()
@@ -163,125 +169,117 @@ with menu_monitoring_1:
 
     df_SPSETenderKontrak = con.execute(SPSETenderKontrak_sql).df()
 
+    df_ECATOK = con.execute(ECAT_sql).df()
+    df_ECATSelesai = con.execute(ECATSelesai_sql).df()
+
+    ##########
+
     ## Prediksi ITKP RUP
-    try:
-        belanja_pengadaan = df_RUPSA_umumkan['belanja_pengadaan'].sum()
-        nilai_total_rup = df_RUPPP_umumkan['pagu'].sum() + df_RUPPS_umumkan['pagu'].sum()
-        persen_capaian_rup = nilai_total_rup / belanja_pengadaan
-        if persen_capaian_rup > 1:
-            prediksi_itkp_rup = (1 - (persen_capaian_rup - 1)) * 10
-        elif persen_capaian_rup > 0.5:
-            prediksi_itkp_rup = persen_capaian_rup * 10
-        else:
-            prediksi_itkp_rup = 0
+    belanja_pengadaan = df_RUPSA_umumkan['belanja_pengadaan'].sum()
+    nilai_total_rup = df_RUPPP_umumkan['pagu'].sum() + df_RUPPS_umumkan['pagu'].sum()
+    persen_capaian_rup = nilai_total_rup / belanja_pengadaan
+    if persen_capaian_rup > 1:
+        prediksi_itkp_rup = (1 - (persen_capaian_rup - 1)) * 10
+    elif persen_capaian_rup > 0.5:
+        prediksi_itkp_rup = persen_capaian_rup * 10
+    else:
+        prediksi_itkp_rup = 0
 
-        ### Tampilan Prediksi ITKP
-        st.subheader("**RENCANA UMUM PENGADAAN**")
-        itkp_sirup_1, itkp_sirup_2, itkp_sirup_3, itkp_sirup_4 = st.columns(4)
-        itkp_sirup_1.metric(label="BELANJA PENGADAAN (MILYAR)", value="{:,.2f}".format(belanja_pengadaan / 1000000000))
-        itkp_sirup_2.metric(label="NILAI RUP (MILYAR)", value="{:,.2f}".format(nilai_total_rup / 1000000000))
-        itkp_sirup_3.metric(label="PERSENTASE", value="{:.2%}".format(persen_capaian_rup))
-        itkp_sirup_4.metric(label="NILAI PREDIKSI (DARI 10)", value="{:,}".format(round(prediksi_itkp_rup, 2)))
+    ### Tampilan Prediksi ITKP
+    st.subheader("**RENCANA UMUM PENGADAAN**")
+    itkp_sirup_1, itkp_sirup_2, itkp_sirup_3, itkp_sirup_4 = st.columns(4)
+    itkp_sirup_1.metric(label="BELANJA PENGADAAN (MILYAR)", value="{:,.2f}".format(belanja_pengadaan / 1000000000))
+    itkp_sirup_2.metric(label="NILAI RUP (MILYAR)", value="{:,.2f}".format(nilai_total_rup / 1000000000))
+    itkp_sirup_3.metric(label="PERSENTASE", value="{:.2%}".format(persen_capaian_rup))
+    itkp_sirup_4.metric(label="NILAI PREDIKSI (DARI 10)", value="{:,}".format(round(prediksi_itkp_rup, 2)))
 
-    except Exception:
-        st.error("Gagal Analisa Prediksi ITKP RUP")
+    ##########
 
     ## Prediksi ITKP E-Tendering
-    try:
-        nilai_etendering_rup = df_RUPPP_umumkan_etendering['pagu'].sum()
-        nilai_etendering_spse = df_SPSETenderPengumuman['pagu'].sum()
-        persen_capaian_etendering = nilai_etendering_spse / nilai_etendering_rup
-        if persen_capaian_etendering > 1:
-            prediksi_itkp_etendering = (1 - (persen_capaian_etendering - 1)) * 5
-        elif persen_capaian_etendering > 0.5:
-            prediksi_itkp_etendering = persen_capaian_etendering * 5
-        else:
-            prediksi_itkp_etendering = 0
+    nilai_etendering_rup = df_RUPPP_umumkan_etendering['pagu'].sum()
+    nilai_etendering_spse = df_SPSETenderPengumuman['pagu'].sum()
+    persen_capaian_etendering = nilai_etendering_spse / nilai_etendering_rup
+    if persen_capaian_etendering > 1:
+        prediksi_itkp_etendering = (1 - (persen_capaian_etendering - 1)) * 5
+    elif persen_capaian_etendering > 0.5:
+        prediksi_itkp_etendering = persen_capaian_etendering * 5
+    else:
+        prediksi_itkp_etendering = 0
 
-        ### Tampilan Prediksi E-Tendering
-        st.subheader("**E-TENDERING**")
-        itkp_etendering_1, itkp_etendering_2, itkp_etendering_3, itkp_etendering_4 = st.columns(4)
-        itkp_etendering_1.metric(label="NILAI RUP E-TENDERING (MILYAR)", value="{:,.2f}".format(nilai_etendering_rup / 1000000000))
-        itkp_etendering_2.metric(label="E-TENDERING SELESAI (MILYAR)", value="{:,.2f}".format(nilai_etendering_spse / 1000000000))
-        itkp_etendering_3.metric(label="PERSENTASE", value="{:.2%}".format(persen_capaian_etendering))
-        itkp_etendering_4.metric(label="NILAI PREDIKSI (DARi 5)", value="{:,}".format(round(prediksi_itkp_etendering, 2)))
+    ### Tampilan Prediksi E-Tendering
+    st.subheader("**E-TENDERING**")
+    itkp_etendering_1, itkp_etendering_2, itkp_etendering_3, itkp_etendering_4 = st.columns(4)
+    itkp_etendering_1.metric(label="NILAI RUP E-TENDERING (MILYAR)", value="{:,.2f}".format(nilai_etendering_rup / 1000000000))
+    itkp_etendering_2.metric(label="E-TENDERING SELESAI (MILYAR)", value="{:,.2f}".format(nilai_etendering_spse / 1000000000))
+    itkp_etendering_3.metric(label="PERSENTASE", value="{:.2%}".format(persen_capaian_etendering))
+    itkp_etendering_4.metric(label="NILAI PREDIKSI (DARi 5)", value="{:,}".format(round(prediksi_itkp_etendering, 2)))
 
-    except Exception:
-        st.error("Gagal Analisa Prediksi ITKP E-TENDERING")
+    ##########
 
     ## Prediksi ITKP Non E-Tendering
-    try:
-        nilai_nonetendering_rup = df_RUPPP_umumkan_nonetendering['pagu'].sum()
-        nilai_nonetendering_spse = df_SPSENonTenderPengumuman['pagu'].sum()
-        persen_capaian_nonetendering = nilai_nonetendering_spse / nilai_nonetendering_rup
-        if persen_capaian_nonetendering > 1:
-            prediksi_itkp_nonetendering = (1 - (persen_capaian_nonetendering - 1)) * 5
-        elif persen_capaian_nonetendering > 0.5:
-            prediksi_itkp_nonetendering = persen_capaian_nonetendering * 5
-        else:
-            prediksi_itkp_nonetendering = 0
+    nilai_nonetendering_rup = df_RUPPP_umumkan_nonetendering['pagu'].sum()
+    nilai_nonetendering_spse = df_SPSENonTenderPengumuman['pagu'].sum()
+    persen_capaian_nonetendering = nilai_nonetendering_spse / nilai_nonetendering_rup
+    if persen_capaian_nonetendering > 1:
+        prediksi_itkp_nonetendering = (1 - (persen_capaian_nonetendering - 1)) * 5
+    elif persen_capaian_nonetendering > 0.5:
+        prediksi_itkp_nonetendering = persen_capaian_nonetendering * 5
+    else:
+        prediksi_itkp_nonetendering = 0
 
-        ### Tampilan Prediksi Non E-Tendering
-        st.subheader("**NON E-TENDERING**")
-        itkp_nonetendering_1, itkp_nonetendering_2, itkp_nonetendering_3, itkp_nonetendering_4 = st.columns(4)
-        itkp_nonetendering_1.metric(label="NILAI RUP NON E-TENDERING (MILYAR)", value="{:,.2f}".format(nilai_nonetendering_rup / 1000000000))
-        itkp_nonetendering_2.metric(label="NON E-TENDERING SELESAI (MILYAR)", value="{:,.2f}".format(nilai_nonetendering_spse / 1000000000))
-        itkp_nonetendering_3.metric(label="PERSENTASE", value="{:.2%}".format(persen_capaian_nonetendering))
-        itkp_nonetendering_4.metric(label="NILAI PREDIKSI (DARI 5)", value="{:,}".format(round(prediksi_itkp_nonetendering, 2)))
+    ### Tampilan Prediksi Non E-Tendering
+    st.subheader("**NON E-TENDERING**")
+    itkp_nonetendering_1, itkp_nonetendering_2, itkp_nonetendering_3, itkp_nonetendering_4 = st.columns(4)
+    itkp_nonetendering_1.metric(label="NILAI RUP NON E-TENDERING (MILYAR)", value="{:,.2f}".format(nilai_nonetendering_rup / 1000000000))
+    itkp_nonetendering_2.metric(label="NON E-TENDERING SELESAI (MILYAR)", value="{:,.2f}".format(nilai_nonetendering_spse / 1000000000))
+    itkp_nonetendering_3.metric(label="PERSENTASE", value="{:.2%}".format(persen_capaian_nonetendering))
+    itkp_nonetendering_4.metric(label="NILAI PREDIKSI (DARI 5)", value="{:,}".format(round(prediksi_itkp_nonetendering, 2)))
 
-    except Exception:
-        st.error("Gagal Analisa Prediksi ITKP NON E-TENDERING")
+    ##########
 
     ## Prediksi ITKP E-KONTRAK
-    try:
-        jumlah_tender_selesai = df_SPSETenderPengumuman['kd_tender'].count()
-        jumlah_tender_kontrak = df_SPSETenderKontrak['kd_tender'].count()
-        persen_capaian_ekontrak = jumlah_tender_kontrak / jumlah_tender_selesai
-        if persen_capaian_ekontrak > 1:
-            prediksi_itkp_ekontrak = (1 - (persen_capaian_ekontrak - 1)) * 5
-        elif persen_capaian_ekontrak > 0.5:
-            prediksi_itkp_ekontrak = persen_capaian_ekontrak * 5
-        else:
-            prediksi_itkp_ekontrak = 0
+    jumlah_tender_selesai = df_SPSETenderPengumuman['kd_tender'].count()
+    jumlah_tender_kontrak = df_SPSETenderKontrak['kd_tender'].count()
+    persen_capaian_ekontrak = jumlah_tender_kontrak / jumlah_tender_selesai
+    if persen_capaian_ekontrak > 1:
+        prediksi_itkp_ekontrak = (1 - (persen_capaian_ekontrak - 1)) * 5
+    elif persen_capaian_ekontrak > 0.5:
+        prediksi_itkp_ekontrak = persen_capaian_ekontrak * 5
+    else:
+        prediksi_itkp_ekontrak = 0
 
-        ### Tampilan Prediksi E-Kontrak
-        st.subheader("**E-KONTRAK**")
-        itkp_ekontrak_1, itkp_ekontrak_2, itkp_ekontrak_3, itkp_ekontrak_4 = st.columns(4)
-        itkp_ekontrak_1.metric(label="JUMLAH PAKET TENDER SELESAI", value="{:,}".format(jumlah_tender_selesai))
-        itkp_ekontrak_2.metric(label="JUMLAH PAKET TENDER BERKONTRAK", value="{:,}".format(jumlah_tender_kontrak))
-        itkp_ekontrak_3.metric(label="PERSENTASE", value="{:.2%}".format(persen_capaian_ekontrak))
-        itkp_ekontrak_4.metric(label="NILAI PREDIKSI (DARI 5)", value="{:,}".format(round(prediksi_itkp_ekontrak, 2)))
+    ### Tampilan Prediksi E-Kontrak
+    st.subheader("**E-KONTRAK**")
+    itkp_ekontrak_1, itkp_ekontrak_2, itkp_ekontrak_3, itkp_ekontrak_4 = st.columns(4)
+    itkp_ekontrak_1.metric(label="JUMLAH PAKET TENDER SELESAI", value="{:,}".format(jumlah_tender_selesai))
+    itkp_ekontrak_2.metric(label="JUMLAH PAKET TENDER BERKONTRAK", value="{:,}".format(jumlah_tender_kontrak))
+    itkp_ekontrak_3.metric(label="PERSENTASE", value="{:.2%}".format(persen_capaian_ekontrak))
+    itkp_ekontrak_4.metric(label="NILAI PREDIKSI (DARI 5)", value="{:,}".format(round(prediksi_itkp_ekontrak, 2)))
 
-    except Exception:
-        st.error("Gagal Analisa Prediksi ITKP E-KONTRAK")
+    ##########
 
     ## Prediksi ITKP E-KATALOG
-    try:
-        ### Baca file Parquet E-Katalog
-        # df_ECAT = tarik_data_parquet(DatasetPURCHASINGECAT)
-        df_ECAT_filter = df_ECAT[df_ECAT['paket_status_str'] == 'Paket Selesai']
 
-        ### Query E-Katalog
-        jumlah_trx_ekatalog = df_ECAT['kd_paket'].nunique()
-        jumlah_trx_ekatalog_selesai = df_ECAT_filter['kd_paket'].nunique()
-        persen_capaian_ekatalog = jumlah_trx_ekatalog_selesai / jumlah_trx_ekatalog
-        if persen_capaian_ekatalog > 1:
-            prediksi_itkp_ekatalog = (1 - (persen_capaian_ekatalog - 1)) * 4
-        elif persen_capaian_ekatalog > 0.5:
-            prediksi_itkp_ekatalog = persen_capaian_ekatalog * 4
-        else:
-            prediksi_itkp_ekatalog = 0
+    ### Query E-Katalog
+    jumlah_trx_ekatalog = df_ECATOK['kd_paket'].nunique()
+    jumlah_trx_ekatalog_selesai = df_ECATSelesai['kd_paket'].nunique()
+    persen_capaian_ekatalog = jumlah_trx_ekatalog_selesai / jumlah_trx_ekatalog
+    if persen_capaian_ekatalog > 1:
+        prediksi_itkp_ekatalog = (1 - (persen_capaian_ekatalog - 1)) * 4
+    elif persen_capaian_ekatalog > 0.5:
+        prediksi_itkp_ekatalog = persen_capaian_ekatalog * 4
+    else:
+        prediksi_itkp_ekatalog = 0
 
-        ### Tampilan Prediksi E-Katalog
-        st.subheader("**E-KATALOG**")
-        itkp_ekatalog_1, itkp_ekatalog_2, itkp_ekatalog_3, itkp_ekatalog_4 = st.columns(4)
-        itkp_ekatalog_1.metric(label="JUMLAH TRANSAKDI E-KATALOG", value="{:,}".format(jumlah_trx_ekatalog))
-        itkp_ekatalog_2.metric(label="JUMLAH TRANSAKSI E-KATALOG (SELESAI)", value="{:,}".format(jumlah_trx_ekatalog_selesai))
-        itkp_ekatalog_3.metric(label="PERSENTASE", value="{:.2%}".format(persen_capaian_ekatalog))
-        itkp_ekatalog_4.metric(label="NILAI PREDIKSI (DARI 4)", value="{:,}".format(round(prediksi_itkp_ekatalog, 2)))
+    ### Tampilan Prediksi E-Katalog
+    st.subheader("**E-KATALOG**")
+    itkp_ekatalog_1, itkp_ekatalog_2, itkp_ekatalog_3, itkp_ekatalog_4 = st.columns(4)
+    itkp_ekatalog_1.metric(label="JUMLAH TRANSAKDI E-KATALOG", value="{:,}".format(jumlah_trx_ekatalog))
+    itkp_ekatalog_2.metric(label="JUMLAH TRANSAKSI E-KATALOG (SELESAI)", value="{:,}".format(jumlah_trx_ekatalog_selesai))
+    itkp_ekatalog_3.metric(label="PERSENTASE", value="{:.2%}".format(persen_capaian_ekatalog))
+    itkp_ekatalog_4.metric(label="NILAI PREDIKSI (DARI 4)", value="{:,}".format(round(prediksi_itkp_ekatalog, 2)))
         
-    except Exception:
-        st.error("Gagal Analisa Prediksi ITKP E-KATALOG")
+    ##########
 
     ## Prediksi ITKP TOKO DARING
     try:
