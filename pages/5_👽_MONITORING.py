@@ -266,7 +266,7 @@ with menu_monitoring_1:
         persen_capaian_ekontrak = jumlah_tender_kontrak / jumlah_tender_selesai
         if persen_capaian_ekontrak > 1:
             prediksi_itkp_ekontrak = (1 - (persen_capaian_ekontrak - 1)) * 5
-        elif persen_capaian_ekontrak > 0.5:
+        elif persen_capaian_ekontrak > 0.2:
             prediksi_itkp_ekontrak = persen_capaian_ekontrak * 5
         else:
             prediksi_itkp_ekontrak = 0
