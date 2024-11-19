@@ -83,7 +83,7 @@ with menu_p3dn_1:
 
     st.subheader("Unggah Template Excel P3DN")
 
-    baca_tkdn = pd.read_excel(DatasetKamusTKDN)
+    baca_tkdn = tarik_data_excel(DatasetKamusTKDN)
     st.dataframe(baca_tkdn)
 
     upload_p3dn = st.file_uploader("Unggah file Excel P3DN", type=["xlsx"])
