@@ -116,6 +116,7 @@ with menu_p3dn_1:
 
             st.write(df_p3dn.shape)
             st.write(df_p3dn_ruptkdn.shape)
+            st.write(df_RUPMAK_filter.shape)
 
             unduh_P3DN = download_excel(df_p3dn_ruptkdn)
 
