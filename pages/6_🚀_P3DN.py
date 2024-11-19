@@ -44,7 +44,7 @@ logo()
     # "KAB. KETAPANG": {"folder": "ktp", "RUP": "D201", "LPSE": "110"},
     # "KAB. TANGGERANG": {"folder": "tgr", "RUP": "D50", "LPSE": "333"},
     # "KAB. KATINGAN": {"folder": "ktg", "RUP": "D236", "LPSE": "438"}
-}
+# }
 
 # daerah = list(region_config.keys())
 # tahuns = ["2024"]
