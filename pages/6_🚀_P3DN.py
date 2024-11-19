@@ -63,7 +63,7 @@ con = duckdb.connect(database=':memory:')
 # duckdb.sql("LOAD httpfs")
 
 # Dataset P3DN
-DatasetKamusTKDN = "https://pbj.my.id/p3dn/KamusTKDN.xlsx"
+DatasetKamusTKDN = "https://data.pbj.my.id/p3dn/KamusTKDN.xlsx"
 
 ## Baca file parquet
 
