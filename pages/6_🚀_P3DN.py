@@ -94,7 +94,15 @@ with menu_p3dn_1:
 
             baca_p3dn = tarik_data_excel(upload_p3dn) 
             df_p3dn = pd.merge(baca_p3dn, baca_tkdn, left_on="Kode Akun", right_on="kode_akun", how="left")
-            st.dataframe(df_p3dn.head(2))
+
+            unduh_P3DN = download_excel(df_p3dn)
+
+            st.download_button(
+                label = "📥 Download Data P3DN Hasil Olahan",
+                data = unduh_P3DN,
+                file_name = f"P3DN_Olahan.xlsx",
+                mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            )        
 
 
         except Exception as e:
