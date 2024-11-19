@@ -87,6 +87,8 @@ with menu_p3dn_1:
 
     if upload_p3dn is not None:
 
+        baca_p3dn = pd.read_excel(upload_p3dn) 
+        st.write("Data dari file yang diunggah:")
         st.dataframe(upload_p3dn)
 
 
