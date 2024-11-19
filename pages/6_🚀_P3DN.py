@@ -96,7 +96,7 @@ with menu_p3dn_1:
             df_p3dn = pd.merge(baca_p3dn, baca_tkdn, left_on="Kode Akun", right_on="kode_akun", how="left")
             df_p3dn["Kode Akun"] = df_p3dn["kode_akun"]
 
-            unduh_P3DN = download_excel(baca_p3dn)
+            unduh_P3DN = download_excel(df_p3dn)
 
             st.download_button(
                 label = "📥 Download Data P3DN Hasil Olahan",
