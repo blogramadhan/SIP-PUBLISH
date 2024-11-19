@@ -89,7 +89,7 @@ with menu_p3dn_1:
 
         baca_p3dn = pd.read_excel(upload_p3dn) 
         st.write("Data dari file yang diunggah:")
-        st.dataframe(baca_p3dn)
+        st.table(baca_p3dn)
 
 
 with menu_p3dn_2:
