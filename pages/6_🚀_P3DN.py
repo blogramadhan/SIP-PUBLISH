@@ -64,12 +64,12 @@ con = duckdb.connect(database=':memory:')
 
 # Dataset P3DN
 DatasetKamusTKDN = "https://data.pbj.my.id/p3dn/KamusTKDN.xlsx"
+DatasetRUPTayang = "https://data.pbj.my.id/p3dn/P3DN%20Format%20Realisasi%20-%20Bulan%20Oktober%20Tahun%202024.xlsx"
 DatasetRUPPaketPenyediaTerumumkan = "https://data.pbj.my.id/D197/sirup/RUP-PaketPenyedia-Terumumkan2024.parquet"
 DatasetRUPPaketAnggaranPenyedia = "https://data.pbj.my.id/D197/sirup/RUP-PaketAnggaranPenyedia2024.parquet"
 
 ## Baca file parquet
 # df_ECAT = pd.merge(df_ECAT0, df_ECAT1, left_on='satker_id', right_on='kd_satker', how='left')
-
 
 #####
 # Presentasi P3DN
@@ -86,15 +86,15 @@ with menu_p3dn_1:
 
     st.subheader("Unggah Template Excel P3DN")
 
-    baca_tkdn = tarik_data_excel(DatasetKamusTKDN)
-    baca_RUPPaketPenyediaTerumumkan = tarik_data_parquet(DatasetRUPPaketPenyediaTerumumkan)
-    baca_RUPPaketAnggaranPenyedia = tarik_data_parquet(DatasetRUPPaketAnggaranPenyedia)
-
     upload_p3dn = st.file_uploader("Unggah file Excel P3DN", type=["xlsx"])
 
     if upload_p3dn is not None:
 
         try:
+
+            baca_tkdn = tarik_data_excel(DatasetKamusTKDN)
+            # baca_RUPPaketPenyediaTerumumkan = tarik_data_parquet(DatasetRUPPaketPenyediaTerumumkan)
+            # baca_RUPPaketAnggaranPenyedia = tarik_data_parquet(DatasetRUPPaketAnggaranPenyedia)
 
             baca_p3dn = tarik_data_excel(upload_p3dn) 
             df_p3dn = pd.merge(baca_p3dn, baca_tkdn, left_on="Kode Akun", right_on="kode_akun", how="left")
@@ -103,31 +103,36 @@ with menu_p3dn_1:
             df_p3dn["kode_sub_kegiatan"] = df_p3dn["Kode Sub Kegiatan"].apply(lambda x: x[:8] + x[-9:] if len(x) == 28 else x)
             df_p3dn["sub_kegiatan_akun"] = df_p3dn["kode_sub_kegiatan"] + "." + df_p3dn["Kode Akun"]
 
-            baca_RUPPaketPenyediaTerumumkan = baca_RUPPaketPenyediaTerumumkan[baca_RUPPaketPenyediaTerumumkan["status_umumkan_rup"] == "Terumumkan"]
-            baca_RUPPaketAnggaranPenyedia_filter = baca_RUPPaketAnggaranPenyedia[["kd_rup", "mak"]]
-            df_RUPMAK = baca_RUPPaketPenyediaTerumumkan.merge(baca_RUPPaketAnggaranPenyedia_filter, how='left', on='kd_rup')
-            df_RUPMAK["sub_kegiatan_akun_rup"] = df_RUPMAK["mak"].apply(lambda x: x[:35])
-            df_RUPMAK_filter = df_RUPMAK[["kd_rup", "mak", "sub_kegiatan_akun_rup", "status_pdn"]]
+            baca_rup_tayang = pd.read_excel(DatasetRUPTayang, sheet_name="ruptayang")
+            baca_rup_tayang = baca_rup_tayang[["RUPMAK", "kd_rup"]]
 
-            df_p3dn_ruptkdn = pd.merge(df_p3dn, df_RUPMAK_filter, left_on="sub_kegiatan_akun", right_on="sub_kegiatan_akun_rup", how="left")
+            st.dataframe(baca_rup_tayang.head(10))
+            
+            # baca_RUPPaketPenyediaTerumumkan = baca_RUPPaketPenyediaTerumumkan[baca_RUPPaketPenyediaTerumumkan["status_umumkan_rup"] == "Terumumkan"]
+            # baca_RUPPaketAnggaranPenyedia_filter = baca_RUPPaketAnggaranPenyedia[["kd_rup", "mak"]]
+            # df_RUPMAK = baca_RUPPaketPenyediaTerumumkan.merge(baca_RUPPaketAnggaranPenyedia_filter, how='left', on='kd_rup')
+            # df_RUPMAK["sub_kegiatan_akun_rup"] = df_RUPMAK["mak"].apply(lambda x: x[:35])
+            # df_RUPMAK_filter = df_RUPMAK[["kd_rup", "mak", "sub_kegiatan_akun_rup", "status_pdn"]]
 
-            df_p3dn_ruptkdn["Kode RUP"] = df_p3dn_ruptkdn["kd_rup"]
+            # df_p3dn_ruptkdn = pd.merge(df_p3dn, df_RUPMAK_filter, left_on="sub_kegiatan_akun", right_on="sub_kegiatan_akun_rup", how="left")
+
+            # df_p3dn_ruptkdn["Kode RUP"] = df_p3dn_ruptkdn["kd_rup"]
             # df_p3dn_ruptkdn = df_p3dn_ruptkdn.drop(["kode_sub_kegiatan", "sub_kegiatan_akun", "kd_rup", "mak", "sub_kegiatan_akun_rup", "status_pdn"], axis=1)
 
-            st.dataframe(df_RUPMAK_filter.head(10))
+            # st.dataframe(df_RUPMAK_filter.head(10))
 
-            st.write(df_p3dn.shape)
-            st.write(df_p3dn_ruptkdn.shape)
-            st.write(df_RUPMAK_filter.shape)
+            # st.write(df_p3dn.shape)
+            # st.write(df_p3dn_ruptkdn.shape)
+            # st.write(df_RUPMAK_filter.shape)
 
-            unduh_P3DN = download_excel(df_p3dn_ruptkdn)
+            # unduh_P3DN = download_excel(df_p3dn_ruptkdn)
 
-            st.download_button(
-                label = "📥 Download Data P3DN Hasil Olahan",
-                data = unduh_P3DN,
-                file_name = f"P3DN_Olahan.xlsx",
-                mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            )        
+            # st.download_button(
+            #     label = "📥 Download Data P3DN Hasil Olahan",
+            #     data = unduh_P3DN,
+            #     file_name = f"P3DN_Olahan.xlsx",
+            #     mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            # )        
 
 
         except Exception as e:
