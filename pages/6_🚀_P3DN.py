@@ -81,7 +81,13 @@ with menu_p3dn_1:
     st.header(f"TOOLS P3DN")
     st.divider()
 
-    st.subheader("Upload Template Excel P3DN")
+    st.subheader("Unggah Template Excel P3DN")
+
+    upload_p3dn = st.file_uploader("Unggah file Excel P3DN", type=["xlsx"])
+
+    if upload_p3dn is not None:
+
+        st.dataframe(upload_p3dn)
 
 
 with menu_p3dn_2:
