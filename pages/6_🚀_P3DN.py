@@ -110,6 +110,9 @@ with menu_p3dn_1:
 
             df_p3dn_ruptkdn = pd.merge(df_p3dn, df_RUPMAK_filter, left_on="sub_kegiatan_akun", right_on="sub_kegiatan_akun_rup", how="left")
 
+            df_p3dn_ruptkdn["Kode RUP"] = df_p3dn_ruptkdn["kd_rup"]
+            df_p3dn_ruptkdn = df_p3dn_ruptkdn.drop(["kode_sub_kegiatan", "sub_kegiatan_akun", "kd_rup", "mak", "sub_kegiatan_akun_rup", "status_pdn"])
+
             st.dataframe(df_p3dn_ruptkdn.head(10))
 
             unduh_P3DN = download_excel(df_p3dn)
