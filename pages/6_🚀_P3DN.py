@@ -95,7 +95,7 @@ with menu_p3dn_1:
             baca_p3dn = tarik_data_excel(upload_p3dn) 
             df_p3dn = pd.merge(baca_p3dn, baca_tkdn, left_on="Kode Akun", right_on="kode_akun", how="left")
             df_p3dn["TKDN"] = df_p3dn["tkdn"]
-            df_p3dn = df_p3dn.drop(["nama_akun", "tkdn"], axis=1)
+            df_p3dn = df_p3dn.drop(["kode_akun", "nama_akun", "tkdn"], axis=1)
 
             unduh_P3DN = download_excel(df_p3dn)
 
