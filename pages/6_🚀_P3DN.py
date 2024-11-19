@@ -107,7 +107,7 @@ with menu_p3dn_1:
             df_RUPMAK = baca_RUPPaketPenyediaTerumumkan.merge(baca_RUPPaketAnggaranPenyedia_filter, how='left', on='kd_rup')
             df_RUPMAK["sub_kegiatan_akun_rup"] = df_RUPMAK["mak"].apply(lambda x: x[:25])
 
-            st.dataframe(df_RUPMAK[["kd_rup", "mak", "status_pdn"]].head(2))
+            st.dataframe(df_RUPMAK[["kd_rup", "mak", "sub_kegiatan_akun_rup", "status_pdn"]].head(2))
 
             unduh_P3DN = download_excel(df_p3dn)
 
