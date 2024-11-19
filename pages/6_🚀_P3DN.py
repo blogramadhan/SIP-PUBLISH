@@ -106,8 +106,9 @@ with menu_p3dn_1:
             baca_RUPPaketAnggaranPenyedia_filter = baca_RUPPaketAnggaranPenyedia[["kd_rup", "mak"]]
             df_RUPMAK = baca_RUPPaketPenyediaTerumumkan.merge(baca_RUPPaketAnggaranPenyedia_filter, how='left', on='kd_rup')
             df_RUPMAK["sub_kegiatan_akun_rup"] = df_RUPMAK["mak"].apply(lambda x: x[:35])
+            df_RUPMAK_filter = df_RUPMAK[["kd_rup", "mak", "sub_kegiatan_akun_rup", "status_pdn"]]
 
-            df_p3dn_ruptkdn = pd.merge(df_p3dn, df_RUPMAK, left_on="sub_kegiatan_akun", right_on="sub_kegiatan_akun_rup", how="left")
+            df_p3dn_ruptkdn = pd.merge(df_p3dn, df_RUPMAK_filter, left_on="sub_kegiatan_akun", right_on="sub_kegiatan_akun_rup", how="left")
 
             st.dataframe(df_p3dn_ruptkdn.head(2))
 
