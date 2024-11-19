@@ -102,30 +102,26 @@ with menu_p3dn_1:
             baca_RUPPaketPenyediaTerumumkan = baca_RUPPaketPenyediaTerumumkan[baca_RUPPaketPenyediaTerumumkan["status_umumkan_rup"] == "Terumumkan"]
             baca_RUPPaketAnggaranPenyedia_filter = baca_RUPPaketAnggaranPenyedia[["kd_rup", "mak"]]
             df_RUPMAK = baca_RUPPaketPenyediaTerumumkan.merge(baca_RUPPaketAnggaranPenyedia_filter, how='left', on='kd_rup')
-            df_RUPMAK["sub_kegiatan_akun_rup"] = df_RUPMAK["mak"].apply(lambda x: x[:35] if len(x) == 60)
-            df_RUPMAK_filter = df_RUPMAK[["kd_rup", "mak", "sub_kegiatan_akun_rup", "status_pdn"]]
+            df_RUPMAK["sub_kegiatan_akun_rup"] = df_RUPMAK["mak"].apply(lambda x: x[:35])
+            df_RUPMAK_filter = df_RUPMAK[["kd_rup", "mak", "sub_kegiatan_akun_rup", "status_pdn"]].drop_duplicates(subset=["sub_kegiatan_akun_rup"])
 
-            st.write(df_RUPMAK_filter.head(10))
+            df_p3dn_ruptkdn = pd.merge(df_p3dn, df_RUPMAK_filter, left_on="sub_kegiatan_akun", right_on="sub_kegiatan_akun_rup", how="left")
 
-            # df_p3dn_ruptkdn = pd.merge(df_p3dn, df_RUPMAK_filter, left_on="sub_kegiatan_akun", right_on="sub_kegiatan_akun_rup", how="left")
+            df_p3dn_ruptkdn["Kode RUP"] = df_p3dn_ruptkdn["kd_rup"]
+            df_p3dn_ruptkdn = df_p3dn_ruptkdn.drop(["kode_sub_kegiatan", "sub_kegiatan_akun", "kd_rup", "mak", "sub_kegiatan_akun_rup", "status_pdn"], axis=1)
 
-            # df_p3dn_ruptkdn["Kode RUP"] = df_p3dn_ruptkdn["kd_rup"]
-            # df_p3dn_ruptkdn = df_p3dn_ruptkdn.drop(["kode_sub_kegiatan", "sub_kegiatan_akun", "kd_rup", "mak", "sub_kegiatan_akun_rup", "status_pdn"], axis=1)
+            st.write(df_p3dn.shape)
+            st.write(df_p3dn_ruptkdn.shape)
+            st.write(df_RUPMAK_filter.shape)
 
-            # st.dataframe(df_RUPMAK_filter.head(10))
+            unduh_P3DN = download_excel(df_p3dn_ruptkdn)
 
-            # st.write(df_p3dn.shape)
-            # st.write(df_p3dn_ruptkdn.shape)
-            # st.write(df_RUPMAK_filter.shape)
-
-            # unduh_P3DN = download_excel(df_p3dn_ruptkdn)
-
-            # st.download_button(
-            #     label = "📥 Download Data P3DN Hasil Olahan",
-            #     data = unduh_P3DN,
-            #     file_name = f"P3DN_Olahan.xlsx",
-            #     mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            # )        
+            st.download_button(
+                label = "📥 Download Data P3DN Hasil Olahan",
+                data = unduh_P3DN,
+                file_name = f"P3DN_Olahan.xlsx",
+                mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            )        
 
 
         except Exception as e:
@@ -136,16 +132,9 @@ with menu_p3dn_1:
 with menu_p3dn_2:
 
     st.header(f"SUMBER DATA P3DN")
-
-    menu_p3dn_2_1, menu_p3dn_2_2 = st.tabs(["| DATA REALISASI |", "| KAMUS TKDN |"])
-
-    ## Data Realisasi
-    with menu_p3dn_2_1:
-
-        st.subheader("DATA REALISASI")
-        st.error("Data Tidak Ada, Sedang Disiapkan")
-
-    with menu_p3dn_2_2:
-
-        st.subheader("KAMUS TKDN")
-        st.error("Data Tidak Ada, Sedang Disiapkan")
+    st.markdown(
+        """
+        * [Template P3DN](https://data.pbj.my.id/p3dn/P3DN%20Format%20Realisasi%20-%20Bulan%20Oktober%20Tahun%202024.xlsx)
+        * [Kamus TKDN](https://data.pbj.my.id/p3dn/KamusTKDN.xlsx)
+        """
+    
