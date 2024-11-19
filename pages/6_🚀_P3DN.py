@@ -103,6 +103,7 @@ with menu_p3dn_1:
             df_p3dn["kode_sub_kegiatan"] = df_p3dn["Kode Sub Kegiatan"].apply(lambda x: x[:8] + x[-9:] if len(x) == 28 else x)
             df_p3dn["sub_kegiatan_akun"] = df_p3dn["kode_sub_kegiatan"] + "." + df_p3dn["Kode Akun"]
 
+            baca_RUPPaketPenyediaTerumumkan = baca_RUPPaketPenyediaTerumumkan[baca_RUPPaketPenyediaTerumumkan["status_umumkan_rup"] == "Terumumkan"]
             baca_RUPPaketAnggaranPenyedia_filter = baca_RUPPaketAnggaranPenyedia[["kd_rup", "mak"]]
             df_RUPMAK = baca_RUPPaketPenyediaTerumumkan.merge(baca_RUPPaketAnggaranPenyedia_filter, how='left', on='kd_rup')
             df_RUPMAK["sub_kegiatan_akun_rup"] = df_RUPMAK["mak"].apply(lambda x: x[:35])
@@ -113,8 +114,8 @@ with menu_p3dn_1:
             df_p3dn_ruptkdn["Kode RUP"] = df_p3dn_ruptkdn["kd_rup"]
             df_p3dn_ruptkdn = df_p3dn_ruptkdn.drop(["kode_sub_kegiatan", "sub_kegiatan_akun", "kd_rup", "mak", "sub_kegiatan_akun_rup", "status_pdn"], axis=1)
 
-            st.write(df_p3dn.value_counts())
-            st.write(df_p3dn_ruptkdn.value_counts())
+            st.write(df_p3dn.shape)
+            st.write(df_p3dn_ruptkdn.shape)
 
             unduh_P3DN = download_excel(df_p3dn_ruptkdn)
 
