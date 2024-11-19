@@ -28,8 +28,8 @@ st.set_page_config(
 logo()
 
 # Konten
-region_config = {
-    "PROV. KALBAR": {"folder": "prov", "RUP": "D197", "LPSE": "97"},
+# region_config = {
+#     "PROV. KALBAR": {"folder": "prov", "RUP": "D197", "LPSE": "97"},
     # "KOTA PONTIANAK": {"folder": "ptk", "RUP": "D199", "LPSE": "62"},
     # "KAB. KUBU RAYA": {"folder": "kkr", "RUP": "D202", "LPSE": "188"},
     # "KAB. MEMPAWAH": {"folder": "mpw", "RUP": "D552", "LPSE": "118"},
@@ -46,16 +46,16 @@ region_config = {
     # "KAB. KATINGAN": {"folder": "ktg", "RUP": "D236", "LPSE": "438"}
 }
 
-daerah = list(region_config.keys())
-tahuns = ["2024"]
+# daerah = list(region_config.keys())
+# tahuns = ["2024"]
 
-pilih = st.sidebar.selectbox("Pilih UKPBJ :", daerah)
-tahun = st.sidebar.selectbox("Pilih Tahun :", tahuns)
+# pilih = st.sidebar.selectbox("Pilih UKPBJ :", daerah)
+# tahun = st.sidebar.selectbox("Pilih Tahun :", tahuns)
 
-selected_region = region_config.get(pilih, {})
-kodeFolder = selected_region.get("folder")
-kodeRUP = selected_region.get("RUP")
-kodeLPSE = selected_region.get("LPSE")
+# selected_region = region_config.get(pilih, {})
+# kodeFolder = selected_region.get("folder")
+# kodeRUP = selected_region.get("RUP")
+# kodeLPSE = selected_region.get("LPSE")
 
 # Baca Dataset
 con = duckdb.connect(database=':memory:')
@@ -73,14 +73,16 @@ DatasetP3DN = ""
 #####
 
 # Sajikan Menu
-menu_p3dn_1, menu_p3dn_2 = st.tabs(["| PREDIKSI P3DN |", "| SUMBER DATA |"])
+menu_p3dn_1, menu_p3dn_2 = st.tabs(["| TOOLS P3DN |", "| SUMBER DATA |"])
 
 ## Tab menu PREDIKSI P3DN
 with menu_p3dn_1:
 
-    st.header(f"PREDIKSI P3DN - {pilih} - TAHUN {tahun}")
+    st.header(f"TOOLS P3DN")
     st.divider()
-    st.error("Gagal Analisa Prediksi P3DN")
+
+    st.title("Upload Template Excel P3DN")
+
 
 with menu_p3dn_2:
 

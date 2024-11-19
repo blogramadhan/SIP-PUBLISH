@@ -33,7 +33,7 @@ def download_excel(df):
     # Buat BytesIO object untuk menyimpan File Excel
     excel_data = io.BytesIO()
     with pd.ExcelWriter(excel_data, engine='xlsxwriter') as writer:
-        df.to_excel(writer, index=False)
+        df.to_excel(writer, index=False, sheet_name='sheet1')
     excel_data.seek(0)
     return excel_data.getvalue()
 
