@@ -114,6 +114,8 @@ with menu_p3dn_1:
             df_p3dn_ruptkdn["Kode RUP"] = df_p3dn_ruptkdn["kd_rup"]
             # df_p3dn_ruptkdn = df_p3dn_ruptkdn.drop(["kode_sub_kegiatan", "sub_kegiatan_akun", "kd_rup", "mak", "sub_kegiatan_akun_rup", "status_pdn"], axis=1)
 
+            st.dataframe(df_RUPMAK_filter.head(10))
+
             st.write(df_p3dn.shape)
             st.write(df_p3dn_ruptkdn.shape)
             st.write(df_RUPMAK_filter.shape)
