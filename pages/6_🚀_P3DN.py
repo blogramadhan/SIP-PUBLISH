@@ -64,6 +64,8 @@ con = duckdb.connect(database=':memory:')
 
 # Dataset P3DN
 DatasetKamusTKDN = "https://data.pbj.my.id/p3dn/KamusTKDN.xlsx"
+DatasetRUPPaketPenyediaTerumumkan = "https://data.pbj.my.id/D197/sirup/RUP-PaketPenyedia-Terumumkan2024.parquet"
+DatasetRUPPaketAnggaranPenyedia = "https://data.pbj.my.id/D197/sirup/RUP-PaketAnggaranPenyedia2024.parquet"
 
 ## Baca file parquet
 # df_ECAT = pd.merge(df_ECAT0, df_ECAT1, left_on='satker_id', right_on='kd_satker', how='left')
@@ -85,6 +87,8 @@ with menu_p3dn_1:
     st.subheader("Unggah Template Excel P3DN")
 
     baca_tkdn = tarik_data_excel(DatasetKamusTKDN)
+    baca_RUPPaketPenyediaTerumumkan = tarik_data_parquet(DatasetRUPPaketPenyediaTerumumkan)
+    baca_RUPPaketAnggaranPenyedia = tarik_data_parquet(DatasetRUPPaketAnggaranPenyedia)
 
     upload_p3dn = st.file_uploader("Unggah file Excel P3DN", type=["xlsx"])
 
@@ -98,6 +102,11 @@ with menu_p3dn_1:
             df_p3dn = df_p3dn.drop(["kode_akun", "nama_akun", "tkdn"], axis=1)
             df_p3dn["kode_sub_kegiatan"] = df_p3dn["Kode Sub Kegiatan"].apply(lambda x: x[:8] + x[-9:] if len(x) == 28 else x)
             df_p3dn["sub_kegiatan_akun"] = df_p3dn["kode_sub_kegiatan"] + "." + df_p3dn["Kode Akun"]
+
+            baca_RUPPaketAnggaranPenyedia_filter = baca_RUPPaketAnggaranPenyedia[["kd_rup", "mak"]]
+            df_RUPMAK = baca_RUPPaketPenyediaTerumumkan.merge(baca_RUPPaketAnggaranPenyedia_filter, how='left', on='kd_rup')
+
+            st.dataframe(df_RUPMAK.head(2))
 
             unduh_P3DN = download_excel(df_p3dn)
 
