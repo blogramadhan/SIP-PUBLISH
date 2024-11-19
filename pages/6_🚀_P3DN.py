@@ -106,7 +106,7 @@ with menu_p3dn_1:
             baca_RUPPaketAnggaranPenyedia_filter = baca_RUPPaketAnggaranPenyedia[["kd_rup", "mak"]]
             df_RUPMAK = baca_RUPPaketPenyediaTerumumkan.merge(baca_RUPPaketAnggaranPenyedia_filter, how='left', on='kd_rup')
 
-            st.dataframe(df_RUPMAK.head(2))
+            st.dataframe(df_RUPMAK[["kd_rup", "mak", "status_pdn"]].head(2))
 
             unduh_P3DN = download_excel(df_p3dn)
 
