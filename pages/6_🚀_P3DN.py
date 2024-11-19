@@ -113,9 +113,7 @@ with menu_p3dn_1:
             df_p3dn_ruptkdn["Kode RUP"] = df_p3dn_ruptkdn["kd_rup"]
             df_p3dn_ruptkdn = df_p3dn_ruptkdn.drop(["kode_sub_kegiatan", "sub_kegiatan_akun", "kd_rup", "mak", "sub_kegiatan_akun_rup", "status_pdn"], axis=1)
 
-            st.dataframe(df_p3dn_ruptkdn.head(10))
-
-            unduh_P3DN = download_excel(df_p3dn)
+            unduh_P3DN = download_excel(df_p3dn_ruptkdn)
 
             st.download_button(
                 label = "📥 Download Data P3DN Hasil Olahan",
