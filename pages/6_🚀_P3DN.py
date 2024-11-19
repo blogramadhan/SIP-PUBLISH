@@ -81,7 +81,7 @@ with menu_p3dn_1:
     st.header(f"TOOLS P3DN")
     st.divider()
 
-    st.title("Upload Template Excel P3DN")
+    st.subheader("Upload Template Excel P3DN")
 
 
 with menu_p3dn_2:
