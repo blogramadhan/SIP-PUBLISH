@@ -66,6 +66,7 @@ con = duckdb.connect(database=':memory:')
 DatasetKamusTKDN = "https://data.pbj.my.id/p3dn/KamusTKDN.xlsx"
 
 ## Baca file parquet
+# df_ECAT = pd.merge(df_ECAT0, df_ECAT1, left_on='satker_id', right_on='kd_satker', how='left')
 
 
 #####
@@ -84,14 +85,21 @@ with menu_p3dn_1:
     st.subheader("Unggah Template Excel P3DN")
 
     baca_tkdn = tarik_data_excel(DatasetKamusTKDN)
-    st.dataframe(baca_tkdn)
 
     upload_p3dn = st.file_uploader("Unggah file Excel P3DN", type=["xlsx"])
 
     if upload_p3dn is not None:
 
-        baca_p3dn = pd.read_excel(upload_p3dn) 
-        st.write("Data dari file yang diunggah:")
+        try:
+
+            baca_p3dn = tarik_data_excel(upload_p3dn) 
+            df_p3dn = pd.merge(baca_p3dn, baca_tkdn, left_on="Kode Akun", right_on="kode_akun", how="left")
+            st.dataframe(df_p3dn.head(2))
+
+
+        except Exception as e:
+            
+            st.error(f"Terjadi Kesalahan: {e}")
 
 
 with menu_p3dn_2:
