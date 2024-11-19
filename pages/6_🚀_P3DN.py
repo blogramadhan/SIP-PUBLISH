@@ -96,6 +96,8 @@ with menu_p3dn_1:
             df_p3dn = pd.merge(baca_p3dn, baca_tkdn, left_on="Kode Akun", right_on="kode_akun", how="left")
             df_p3dn["TKDN"] = df_p3dn["tkdn"]
             df_p3dn = df_p3dn.drop(["kode_akun", "nama_akun", "tkdn"], axis=1)
+            df_p3dn["kode_sub_kegiatan"] = df_p3dn["Kode Sub Kegiatan"].apply(lambda x: x[:8] + x[-9:] if len(x) == 28 else x)
+            df_p3dn["sub_kegiatan_akun"] = df_p3dn["kode_sub_kegiatan"] + "." + df_p3dn["Kode Akun"]
 
             unduh_P3DN = download_excel(df_p3dn)
 
