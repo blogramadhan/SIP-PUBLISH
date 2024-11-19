@@ -116,7 +116,7 @@ with menu_p3dn_1:
             st.write(df_realisasi_p3dn.shape)
             st.write(df_p3dn_ruptkdn_filter.shape)
 
-            st.dataframe(baca_komitmen_p3dn[("KODE AKUN", "JENIS")].head(10))
+            st.dataframe(str(baca_komitmen_p3dn[("KODE AKUN", "JENIS")]).head(10))
 
             unduh_P3DN = download_excel(df_p3dn_ruptkdn_filter)
 
