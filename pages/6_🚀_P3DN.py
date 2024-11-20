@@ -111,7 +111,7 @@ with menu_p3dn_1:
             df_p3dn_ruptkdn["Kode RUP"] = df_p3dn_ruptkdn["kd_rup"]
             df_p3dn_ruptkdn_filter = df_p3dn_ruptkdn.drop(["kode_sub_kegiatan", "sub_kegiatan_akun", "kd_rup", "mak", "sub_kegiatan_akun_rup", "status_pdn"], axis=1)
 
-            baca_komitmen_p3dn = pd.read_excel(upload_komitmen_p3dn.[()], header=[0,1])
+            baca_komitmen_p3dn = pd.read_excel(upload_komitmen_p3dn, header=[0,1])
 
             st.write(df_realisasi_p3dn.shape)
             st.write(df_p3dn_ruptkdn_filter.shape)
