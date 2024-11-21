@@ -124,21 +124,12 @@ with menu_p3dn_1:
             df_p3dn_ruptkdn["Realisasi Belanja"] = ((df_p3dn_ruptkdn["proporsi"] * df_p3dn_ruptkdn["Anggaran Belanja"]) // 1000) * 1000
             df_p3dn_ruptkdn_filter = df_p3dn_ruptkdn.drop(["kode_sub_kegiatan", "sub_kegiatan_akun", "kd_rup", "mak", "sub_kegiatan_akun_rup", "status_pdn", "proporsi"], axis=1)
 
-            st.dataframe(proporsi.head(10))
-            st.dataframe(df_proporsi.head(10))
-            st.dataframe(df_proporsi_ok.head(10))
-            st.write(proporsi.shape)
-            st.write(df_proporsi.shape)
-            st.write(df_proporsi_ok.shape)
-
             # baca_komitmen_p3dn = pd.read_excel(upload_komitmen_p3dn, header=[0,1])
 
             st.write(df_realisasi_p3dn.shape)
             st.write(df_p3dn_ruptkdn_filter.shape)
 
-            # st.dataframe(baca_komitmen_p3dn.head(10))
-
-            unduh_P3DN = download_excel(df_p3dn_ruptkdn)
+            unduh_P3DN = download_excel(df_p3dn_ruptkdn_filter)
 
             st.download_button(
                 label = "📥 Download Data P3DN Hasil Olahan",
