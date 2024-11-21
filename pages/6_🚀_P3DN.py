@@ -109,9 +109,7 @@ with menu_p3dn_1:
             df_RUPMAK_filter = df_RUPMAK[["kd_rup", "mak", "sub_kegiatan_akun_rup", "status_pdn"]].drop_duplicates(subset=["sub_kegiatan_akun_rup"])
 
             df_p3dn_ruptkdn = pd.merge(df_realisasi_p3dn, df_RUPMAK_filter, left_on="sub_kegiatan_akun", right_on="sub_kegiatan_akun_rup", how="left")
-
             df_p3dn_ruptkdn["Kode RUP"] = df_p3dn_ruptkdn["kd_rup"]
-            df_p3dn_ruptkdn_filter = df_p3dn_ruptkdn.drop(["kode_sub_kegiatan", "sub_kegiatan_akun", "kd_rup", "mak", "sub_kegiatan_akun_rup", "status_pdn"], axis=1)
 
             proporsi_sql = f'SELECT sub_kegiatan_akun, SUM(CAST("Anggaran Belanja" AS BIGINT)) AS anggaran_belanja FROM df_p3dn_ruptkdn GROUP BY sub_kegiatan_akun'
             proporsi = con.execute(proporsi_sql).df()
@@ -119,8 +117,11 @@ with menu_p3dn_1:
 
             df_proporsi = pd.merge(proporsi, baca_realisasi_filter, left_on="sub_kegiatan_akun", right_on="cobe", how="left")
             df_proporsi_ok = con.execute(f"SELECT sub_kegiatan_akun, anggaran_belanja, total_realisasi, total_realisasi / NULLIF(anggaran_belanja, 0) AS proporsi FROM df_proporsi").df()
+            df_proporsi_ok_filter = df_proporsi_ok[["sub_kegiatan_akun", "proporsi"]]
 
-            # df_SIKAPTender_OK_filter_final = df_SIKAPTender_OK_filter.assign(KETERANGAN = np.where(df_SIKAPTender_OK_filter['SKOR_PENILAIAN'] >= 3, "SANGAT BAIK", np.where(df_SIKAPTender_OK_filter['SKOR_PENILAIAN'] >= 2, "BAIK", np.where(df_SIKAPTender_OK_filter['SKOR_PENILAIAN'] >= 1, "CUKUP", "BURUK"))))
+            df_p3dn_ruptkdn = pd.merge(df_p3dn_ruptkdn, df_proporsi_ok_filter, left_on="sub_kegiatan_akun", right_on="sub_kegiatan_akun", how="left")
+            df_p3dn_ruptkdn["Realisasi Belanja"] = df_p3dn_ruptkdn["proporsi"] * df_p3dn_ruptkdn["Anggaran Belanja"]
+            df_p3dn_ruptkdn_filter = df_p3dn_ruptkdn.drop(["kode_sub_kegiatan", "sub_kegiatan_akun", "kd_rup", "mak", "sub_kegiatan_akun_rup", "status_pdn", "proporsi"], axis=1)
 
             st.dataframe(proporsi.head(10))
             st.dataframe(df_proporsi.head(10))
