@@ -64,6 +64,7 @@ con = duckdb.connect(database=':memory:')
 
 # Dataset P3DN
 DatasetKamusTKDN = "https://data.pbj.my.id/p3dn/KamusTKDN.xlsx"
+DatasetRealisasi = "https://data.pbj.my.id/p3dn/Realisasi.xlsx"
 DatasetRUPPaketPenyediaTerumumkan = "https://data.pbj.my.id/D197/sirup/RUP-PaketPenyedia-Terumumkan2024.parquet"
 DatasetRUPPaketAnggaranPenyedia = "https://data.pbj.my.id/D197/sirup/RUP-PaketAnggaranPenyedia2024.parquet"
 
@@ -90,6 +91,7 @@ with menu_p3dn_1:
         try:
 
             baca_tkdn = tarik_data_excel(DatasetKamusTKDN)
+            baca_realisasi = tarik_data_excel(DatasetRealisasi)
             baca_RUPPaketPenyediaTerumumkan = tarik_data_parquet(DatasetRUPPaketPenyediaTerumumkan)
             baca_RUPPaketAnggaranPenyedia = tarik_data_parquet(DatasetRUPPaketAnggaranPenyedia)
 
@@ -113,9 +115,14 @@ with menu_p3dn_1:
 
             proporsi_sql = f'SELECT sub_kegiatan_akun, SUM(CAST("Anggaran Belanja" AS BIGINT)) AS anggaran_belanja FROM df_p3dn_ruptkdn GROUP BY sub_kegiatan_akun'
             proporsi = con.execute(proporsi_sql).df()
+            baca_realisasi_filter = baca_realisasi[["cobe", "total_realisasi"]].drop_duplicates(subset=["cobe"])
+
+            df_proporsi = pd.merge(proporsi, baca_realisasi, left_on="sub_kegiatan_akun", right_on="cobe", how="left")
 
             st.dataframe(proporsi.head(10))
+            st.dataframe(df_proporsi.head(10))
             st.write(proporsi.shape)
+            st.write(df_proporsi.shape)
 
             # baca_komitmen_p3dn = pd.read_excel(upload_komitmen_p3dn, header=[0,1])
 
