@@ -118,11 +118,16 @@ with menu_p3dn_1:
             baca_realisasi_filter = baca_realisasi[["cobe", "total_realisasi"]].drop_duplicates(subset=["cobe"])
 
             df_proporsi = pd.merge(proporsi, baca_realisasi_filter, left_on="sub_kegiatan_akun", right_on="cobe", how="left")
+            df_proporsi_ok = con.execute(f"SELECT sub_kegiatan_akun, anggaran_belanja, total realisasi, total_realisasi / NULLIF(anggaran_belanja, 0) AS proporsi FROM df_proporsi").df()
+
+            # df_SIKAPTender_OK_filter_final = df_SIKAPTender_OK_filter.assign(KETERANGAN = np.where(df_SIKAPTender_OK_filter['SKOR_PENILAIAN'] >= 3, "SANGAT BAIK", np.where(df_SIKAPTender_OK_filter['SKOR_PENILAIAN'] >= 2, "BAIK", np.where(df_SIKAPTender_OK_filter['SKOR_PENILAIAN'] >= 1, "CUKUP", "BURUK"))))
 
             st.dataframe(proporsi.head(10))
             st.dataframe(df_proporsi.head(10))
+            st.dataframe(df_proporsi_ok.head(10))
             st.write(proporsi.shape)
             st.write(df_proporsi.shape)
+            st.write(df_proporsi_ok.shape)
 
             # baca_komitmen_p3dn = pd.read_excel(upload_komitmen_p3dn, header=[0,1])
 
