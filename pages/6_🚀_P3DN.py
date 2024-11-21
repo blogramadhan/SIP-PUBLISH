@@ -83,10 +83,10 @@ with menu_p3dn_1:
     st.subheader("Unggah Template Excel Realisasi dan Komitmen P3DN")
 
     upload_realisasi_p3dn = st.file_uploader("Unggah file Excel Realisasi P3DN", type=["xlsx"])
-    upload_komitmen_p3dn = st.file_uploader("Unggah file Excel Komitmen P3DN", type=["xlsx"])
+    # upload_komitmen_p3dn = st.file_uploader("Unggah file Excel Komitmen P3DN", type=["xlsx"])
 
-    if upload_realisasi_p3dn and upload_komitmen_p3dn is not None:
-
+    # if upload_realisasi_p3dn and upload_komitmen_p3dn is not None:
+    if upload_realisasi_p3dn is not None:
         try:
 
             baca_tkdn = tarik_data_excel(DatasetKamusTKDN)
@@ -111,12 +111,17 @@ with menu_p3dn_1:
             df_p3dn_ruptkdn["Kode RUP"] = df_p3dn_ruptkdn["kd_rup"]
             df_p3dn_ruptkdn_filter = df_p3dn_ruptkdn.drop(["kode_sub_kegiatan", "sub_kegiatan_akun", "kd_rup", "mak", "sub_kegiatan_akun_rup", "status_pdn"], axis=1)
 
-            baca_komitmen_p3dn = pd.read_excel(upload_komitmen_p3dn, header=[0,1])
+            proporsi_sql = f"SELECT 'sub_kegiatan_akun', SUM('Anggaran Belanja') FROM df_p3dn_ruptkdn GROUP BY 'sub_kegiatan_akun'"
+            proporsi = con.execute(proporsi_sql).df()
+
+            st.dataframe(proporsi.head(10))
+
+            # baca_komitmen_p3dn = pd.read_excel(upload_komitmen_p3dn, header=[0,1])
 
             st.write(df_realisasi_p3dn.shape)
             st.write(df_p3dn_ruptkdn_filter.shape)
 
-            st.dataframe(baca_komitmen_p3dn.head(10))
+            # st.dataframe(baca_komitmen_p3dn.head(10))
 
             unduh_P3DN = download_excel(df_p3dn_ruptkdn)
 
