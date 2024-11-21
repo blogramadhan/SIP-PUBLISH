@@ -117,7 +117,7 @@ with menu_p3dn_1:
             proporsi = con.execute(proporsi_sql).df()
             baca_realisasi_filter = baca_realisasi[["cobe", "total_realisasi"]].drop_duplicates(subset=["cobe"])
 
-            df_proporsi = pd.merge(proporsi, baca_realisasi, left_on="sub_kegiatan_akun", right_on="cobe", how="left")
+            df_proporsi = pd.merge(proporsi, baca_realisasi_filter, left_on="sub_kegiatan_akun", right_on="cobe", how="left")
 
             st.dataframe(proporsi.head(10))
             st.dataframe(df_proporsi.head(10))
