@@ -111,7 +111,7 @@ with menu_p3dn_1:
             df_p3dn_ruptkdn["Kode RUP"] = df_p3dn_ruptkdn["kd_rup"]
             df_p3dn_ruptkdn_filter = df_p3dn_ruptkdn.drop(["kode_sub_kegiatan", "sub_kegiatan_akun", "kd_rup", "mak", "sub_kegiatan_akun_rup", "status_pdn"], axis=1)
 
-            proporsi_sql = f"SELECT sub_kegiatan_akun, SUM(CAST('Anggaran Belanja' AS DECIMAL)) AS Anggaran_Belanja FROM df_p3dn_ruptkdn GROUP BY sub_kegiatan_akun"
+            proporsi_sql = f'SELECT sub_kegiatan_akun, SUM(CAST("Anggaran Belanja" AS INTEGER)) AS Anggaran_Belanja FROM df_p3dn_ruptkdn GROUP BY sub_kegiatan_akun'
             proporsi = con.execute(proporsi_sql).df()
 
             st.dataframe(proporsi.head(10))
