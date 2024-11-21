@@ -1,6 +1,7 @@
 # Library Utama
 import pandas as pd
 import numpy as np
+import math
 import plotly.express as px
 import duckdb
 import openpyxl
@@ -120,7 +121,7 @@ with menu_p3dn_1:
             df_proporsi_ok_filter = df_proporsi_ok[["sub_kegiatan_akun", "proporsi"]]
 
             df_p3dn_ruptkdn = pd.merge(df_p3dn_ruptkdn, df_proporsi_ok_filter, left_on="sub_kegiatan_akun", right_on="sub_kegiatan_akun", how="left")
-            df_p3dn_ruptkdn["Realisasi Belanja"] = df_p3dn_ruptkdn["proporsi"] * df_p3dn_ruptkdn["Anggaran Belanja"]
+            df_p3dn_ruptkdn["Realisasi Belanja"] = math.floor((df_p3dn_ruptkdn["proporsi"] * df_p3dn_ruptkdn["Anggaran Belanja"]) / 1000) * 1000
             df_p3dn_ruptkdn_filter = df_p3dn_ruptkdn.drop(["kode_sub_kegiatan", "sub_kegiatan_akun", "kd_rup", "mak", "sub_kegiatan_akun_rup", "status_pdn", "proporsi"], axis=1)
 
             st.dataframe(proporsi.head(10))
