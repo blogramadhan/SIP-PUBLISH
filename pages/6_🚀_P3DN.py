@@ -102,7 +102,7 @@ with menu_p3dn_1:
             df_realisasi_p3dn = df_realisasi_p3dn.drop(["kode_akun", "nama_akun", "tkdn"], axis=1)
             df_realisasi_p3dn["kode_sub_kegiatan"] = df_realisasi_p3dn["Kode Sub Kegiatan"].apply(lambda x: x[:8] + x[-9:] if len(x) == 28 else x)
             df_realisasi_p3dn["sub_kegiatan_akun"] = df_realisasi_p3dn["kode_sub_kegiatan"] + "." + df_realisasi_p3dn["Kode Akun"]
-            df_realisasi_p3dn["sub_kegiatan_akun"] = df_realisasi_p3dn["kode_sub_kegiatan"].apply(lambda x: "5.02.01" + x[7:] if x.startswith("2.21.01") else x)
+            df_realisasi_p3dn["sub_kegiatan_akun"] = df_realisasi_p3dn["sub_kegiatan_akun"].apply(lambda x: "5.02.01" + x[7:] if x.startswith("2.21.01") else x)
 
             baca_RUPPaketPenyediaTerumumkan = baca_RUPPaketPenyediaTerumumkan[baca_RUPPaketPenyediaTerumumkan["status_umumkan_rup"] == "Terumumkan"]
             baca_RUPPaketAnggaranPenyedia_filter = baca_RUPPaketAnggaranPenyedia[["kd_rup", "mak"]]
