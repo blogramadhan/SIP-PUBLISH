@@ -150,7 +150,8 @@ with menu_p3dn_1:
             merged_df = df_komitmen.merge(
                 df_p3dn_ruptkdn_komitmen,
                 left_on="kode_akun_gabungan",
-                right_on="sub_kegiatan_akun"
+                right_on="sub_kegiatan_akun",
+                how="left"
             )
 
             st.write(df_realisasi_p3dn.shape)
