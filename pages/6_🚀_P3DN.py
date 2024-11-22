@@ -145,8 +145,10 @@ with menu_p3dn_1:
             df_komitmen.columns = [' '.join(col).strip() for col in df_komitmen.columns]
 
             # Gabungkan data berdasarkan kode_akun_gabungan dari df_komitmen dan sub_kegiatan_akun dari Realisasi Olahan
+            df_p3dn_ruptkdn_komitmen = df_p3dn_ruptkdn[["sub_kegiatan_akun", "status_pdn", "TKDN"]].drop_duplicates(subset=["sub_kegiatan_akun"])
+            
             merged_df = df_komitmen.merge(
-                df_p3dn_ruptkdn[["sub_kegiatan_akun", "status_pdn", "TKDN"]].drop_duplicates(subset=["sub_kegiatan_akun"]),
+                df_p3dn_ruptkdn_komitmen,
                 left_on="kode_akun_gabungan",
                 right_on="sub_kegiatan_akun"
             )
