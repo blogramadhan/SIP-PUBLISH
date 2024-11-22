@@ -167,6 +167,7 @@ with menu_p3dn_1:
 
             st.write(df_komitmen.shape)
             st.write(merged_df.shape)
+            st.write(df_p3dn_ruptkdn_komitmen.shape)
 
             st.dataframe(merged_df.head(10))
 
