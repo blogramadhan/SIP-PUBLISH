@@ -146,7 +146,7 @@ with menu_p3dn_1:
 
             # Gabungkan data berdasarkan kode_akun_gabungan dari df_komitmen dan sub_kegiatan_akun dari Realisasi Olahan
             merged_df = df_komitmen.merge(
-                df_p3dn_ruptkdn[["sub_kegiatan_akun", "status_pdn", "TKDN"]],
+                df_p3dn_ruptkdn[["sub_kegiatan_akun", "status_pdn", "TKDN"]].drop_duplicates(subset=["sub_kegiatan_akun"]),
                 left_on="kode_akun_gabungan",
                 right_on="sub_kegiatan_akun"
             )
