@@ -102,6 +102,7 @@ with menu_p3dn_1:
             df_realisasi_p3dn = df_realisasi_p3dn.drop(["kode_akun", "nama_akun", "tkdn"], axis=1)
             df_realisasi_p3dn["kode_sub_kegiatan"] = df_realisasi_p3dn["Kode Sub Kegiatan"].apply(lambda x: x[:8] + x[-9:] if len(x) == 28 else x)
             df_realisasi_p3dn["sub_kegiatan_akun"] = df_realisasi_p3dn["kode_sub_kegiatan"] + "." + df_realisasi_p3dn["Kode Akun"]
+            # df_realisasi_p3dn["sub_kegiatan_akun"] = df_realisasi_p3dn["kode_sub_kegiatan".apply(lambda x: )]
 
             baca_RUPPaketPenyediaTerumumkan = baca_RUPPaketPenyediaTerumumkan[baca_RUPPaketPenyediaTerumumkan["status_umumkan_rup"] == "Terumumkan"]
             baca_RUPPaketAnggaranPenyedia_filter = baca_RUPPaketAnggaranPenyedia[["kd_rup", "mak"]]
@@ -129,7 +130,7 @@ with menu_p3dn_1:
             st.write(df_realisasi_p3dn.shape)
             st.write(df_p3dn_ruptkdn_filter.shape)
 
-            unduh_P3DN = download_excel(df_p3dn_ruptkdn_filter)
+            unduh_P3DN = download_excel(df_p3dn_ruptkdn)
 
             st.download_button(
                 label = "📥 Download Data P3DN Hasil Olahan",
