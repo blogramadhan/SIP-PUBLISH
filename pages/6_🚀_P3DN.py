@@ -144,15 +144,24 @@ with menu_p3dn_1:
             # Flatten Multiindex header to single level for manipulation
             df_komitmen.columns = [' '.join(col).strip() for col in df_komitmen.columns]
 
-            # Gabungkan data berdasarkan kode_akun_gabungan dari df_komitmen dan sub_kegiatan_akun dari Realisasi Olahan
-            df_p3dn_ruptkdn_komitmen = df_p3dn_ruptkdn[["sub_kegiatan_akun", "status_pdn", "TKDN"]].drop_duplicates(subset=["sub_kegiatan_akun"])
-            
+            # Gabungkan data berdasarkan kode_akun_gabungan dari df_komitmen dan sub_kegiatan_akun dari Realisasi Olahan            
             merged_df = df_komitmen.merge(
-                df_p3dn_ruptkdn_komitmen,
+                df_p3dn_ruptkdn[["sub_kegiatan_akun", "status_pdn", "TKDN"]].drop_duplicates(subset=["sub_kegiatan_akun"]),
                 left_on="kode_akun_gabungan",
                 right_on="sub_kegiatan_akun",
                 how="left"
             )
+
+            # Kolom yang kita gunakan: SIPD - ANGGARAN SIPD dan KOMITMEN PDN ANGGARAN
+            anggaran_sipd_col = "SIPD ANGGARAN SIPD"
+            anggaran_pdn_col = "KOMITMEN NILAI PRODUK DALAM NEGERI(PDN) ANGGARAN PDN"
+            tkdn_col = "TKDN(%)"
+
+            # Jika TKDN > 0, salin nilai TKDN * nilai ANGGARAN SIPD ke ANGGARAN PDN
+            merged_df.loc[merged_df['TKDN'] > 0, anggaran_pdn_col] = merged_df[anggaran_sipd_col] * merged_df["TKDN"]
+
+            # Perbarui kolom TKDN(%) dengan nilai dari TKDN dari df_p3dn_ruptkdn
+            merged_df[tkdn_col] = merged_df["TKDN"]
 
             st.write(df_realisasi_p3dn.shape)
             st.write(df_p3dn_ruptkdn_filter.shape)
@@ -168,7 +177,6 @@ with menu_p3dn_1:
 
             st.write(df_komitmen.shape)
             st.write(merged_df.shape)
-            st.write(df_p3dn_ruptkdn_komitmen.shape)
 
             st.dataframe(merged_df.head(10))
 
