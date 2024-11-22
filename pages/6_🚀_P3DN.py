@@ -155,13 +155,13 @@ with menu_p3dn_1:
             # Kolom yang kita gunakan: SIPD - ANGGARAN SIPD dan KOMITMEN PDN ANGGARAN
             anggaran_sipd_col = "SIPD ANGGARAN SIPD"
             anggaran_pdn_col = "KOMITMEN NILAI PRODUK DALAM NEGERI(PDN) ANGGARAN PDN"
-            tkdn_col = "TKDN(%)"
+            # tkdn_col = "TKDN(%)"
 
             merged_df[anggaran_sipd_col] = pd.to_numeric(merged_df[anggaran_sipd_col], errors='coerce')
-            merged_df[tkdn_col] = pd.to_numeric(merged_df[tkdn_col], errors='coerce')
+            merged_df["TKDN(%)"] = pd.to_numeric(merged_df["TKDN(%)"], errors='coerce')
 
             merged_df[anggaran_sipd_col].fillna(0, inplace=True)
-            merged_df[tkdn_col].fillna(0, inplace=True)
+            merged_df["TKDN(%)"].fillna(0, inplace=True)
 
             # Jika TKDN > 0, salin nilai TKDN * nilai ANGGARAN SIPD ke ANGGARAN PDN
             merged_df.loc[merged_df['TKDN'] > 0, anggaran_pdn_col] = (
