@@ -168,10 +168,9 @@ with menu_p3dn_1:
                 merged_df[anggaran_sipd_col] * merged_df["TKDN"] / 100
             )
 
-            df_p3dn_ruptkdn_filter = df_p3dn_ruptkdn.drop(["kode_sub_kegiatan", "sub_kegiatan_akun", "kd_rup", "mak", "sub_kegiatan_akun_rup", "status_pdn", "proporsi"], axis=1)
-
             # Perbarui kolom TKDN(%) dengan nilai dari TKDN dari df_p3dn_ruptkdn
             merged_df[tkdn_col] = merged_df["TKDN"]
+            merged_df_filter = merged_df.drop(["kode_akun_gabungan", "sub_kegiatan_akun", "status_pdn", "TKDN"], axis=1)
 
             st.write(df_realisasi_p3dn.shape)
             st.write(df_p3dn_ruptkdn_filter.shape)
@@ -188,7 +187,7 @@ with menu_p3dn_1:
             st.write(df_komitmen.shape)
             st.write(merged_df.shape)
 
-            st.dataframe(merged_df.head(10))
+            st.dataframe(merged_df_filter.head(10))
 
         except Exception as e:
             
