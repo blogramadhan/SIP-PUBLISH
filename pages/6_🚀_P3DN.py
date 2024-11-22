@@ -130,7 +130,7 @@ with menu_p3dn_1:
             st.write(df_realisasi_p3dn.shape)
             st.write(df_p3dn_ruptkdn_filter.shape)
 
-            unduh_P3DN = download_excel(df_p3dn_ruptkdn_filter)
+            unduh_P3DN = download_excel(df_p3dn_ruptkdn)
 
             st.download_button(
                 label = "📥 Download Data P3DN Hasil Olahan",
