@@ -178,16 +178,23 @@ with menu_p3dn_1:
             unduh_P3DN = download_excel(df_p3dn_ruptkdn_filter)
 
             st.download_button(
-                label = "📥 Download Data P3DN Hasil Olahan",
+                label = "📥 Download Data Realisasi P3DN Hasil Olahan",
                 data = unduh_P3DN,
-                file_name = f"P3DN_Olahan.xlsx",
+                file_name = f"Realisasi_P3DN_Olahan.xlsx",
                 mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             )        
 
             st.write(df_komitmen.shape)
             st.write(merged_df.shape)
 
-            st.dataframe(merged_df_filter.head(10))
+            unduh_KOMITMEN = download_excel(merged_df_filter)
+
+            st.download_button(
+                label = "📥 Download Data Komitmen P3DN Hasil Olahan",
+                data = unduh_KOMITMEN,
+                file_name = f"Komitmen_P3DN_Olahan.xlsx",
+                mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+            )
 
         except Exception as e:
             
