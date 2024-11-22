@@ -85,7 +85,7 @@ with menu_p3dn_1:
     st.subheader("Unggah Template Excel Realisasi dan Komitmen P3DN")
 
     upload_realisasi_p3dn = st.file_uploader("Unggah file Excel Realisasi P3DN", type=["xlsx"])
-    # upload_komitmen_p3dn = st.file_uploader("Unggah file Excel Komitmen P3DN", type=["xlsx"])
+    upload_komitmen_p3dn = st.file_uploader("Unggah file Excel Komitmen P3DN", type=["xlsx"])
 
     # if upload_realisasi_p3dn and upload_komitmen_p3dn is not None:
     if upload_realisasi_p3dn is not None:
@@ -96,6 +96,7 @@ with menu_p3dn_1:
             baca_RUPPaketPenyediaTerumumkan = tarik_data_parquet(DatasetRUPPaketPenyediaTerumumkan)
             baca_RUPPaketAnggaranPenyedia = tarik_data_parquet(DatasetRUPPaketAnggaranPenyedia)
 
+            ### Realisasi
             baca_realisasi_p3dn = tarik_data_excel(upload_realisasi_p3dn) 
             df_realisasi_p3dn = pd.merge(baca_realisasi_p3dn, baca_tkdn, left_on="Kode Akun", right_on="kode_akun", how="left")
             df_realisasi_p3dn["TKDN"] = df_realisasi_p3dn["tkdn"]
@@ -125,12 +126,25 @@ with menu_p3dn_1:
             df_p3dn_ruptkdn["Realisasi Belanja"] = (((df_p3dn_ruptkdn["proporsi"] * df_p3dn_ruptkdn["Anggaran Belanja"]) // 1000) * 1000).fillna(0)
             df_p3dn_ruptkdn_filter = df_p3dn_ruptkdn.drop(["kode_sub_kegiatan", "sub_kegiatan_akun", "kd_rup", "mak", "sub_kegiatan_akun_rup", "status_pdn", "proporsi"], axis=1)
 
-            # baca_komitmen_p3dn = pd.read_excel(upload_komitmen_p3dn, header=[0,1])
+            ### Komitmen
+            df_komitmen = pd.read_excel(upload_komitmen_p3dn, header=[0,1], dtype=str)
+            
+            # Kolom untuk kode urusan/program/kegiatan/subkegiatan
+            kode_col = ("KODE URUSAN/BIDANG URUSAN/PROGRAM KEG/SUBKEG", "Unnamed: 1_level_1")
+
+            # Gabungkan semua kode di bawah header utama KODE AKUN di df_komitmen menjadi satu kolom
+            kode_akun_columns = [col for col in df_komitmen.columns if col[0] == "KODE AKUN"]
+            df_komitmen[("kode_akun_gabungan", "")] = (
+                df_komitmen[kode_col].apply(lambda x: x[:8] + x[-9:] if len(x) == 28 else x) + "." +
+                df_komitmen[kode_akun_columns].astype(str).apply(lambda row: ".".join(row), axis=1)
+            )
+
+
 
             st.write(df_realisasi_p3dn.shape)
             st.write(df_p3dn_ruptkdn_filter.shape)
 
-            unduh_P3DN = download_excel(df_p3dn_ruptkdn)
+            unduh_P3DN = download_excel(df_p3dn_ruptkdn_filter)
 
             st.download_button(
                 label = "📥 Download Data P3DN Hasil Olahan",
