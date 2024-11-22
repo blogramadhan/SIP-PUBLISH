@@ -90,7 +90,7 @@ with menu_p3dn_1:
     upload_komitmen_p3dn = st.file_uploader("Unggah file Excel Komitmen P3DN", type=["xlsx"])
 
     # if upload_realisasi_p3dn and upload_komitmen_p3dn is not None:
-    if upload_realisasi_p3dn is not None:
+    if upload_realisasi_p3dn and upload_komitmen_p3dn is not None:
         try:
 
             baca_tkdn = tarik_data_excel(DatasetKamusTKDN)
