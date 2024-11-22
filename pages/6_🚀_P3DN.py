@@ -152,21 +152,21 @@ with menu_p3dn_1:
                 how="left"
             )
 
-            # # Kolom yang kita gunakan: SIPD - ANGGARAN SIPD dan KOMITMEN PDN ANGGARAN
-            # anggaran_sipd_col = "SIPD ANGGARAN SIPD"
-            # anggaran_pdn_col = "KOMITMEN NILAI PRODUK DALAM NEGERI(PDN) ANGGARAN PDN"
-            # tkdn_col = "TKDN(%)"
+            # Kolom yang kita gunakan: SIPD - ANGGARAN SIPD dan KOMITMEN PDN ANGGARAN
+            anggaran_sipd_col = "SIPD ANGGARAN SIPD"
+            anggaran_pdn_col = "KOMITMEN NILAI PRODUK DALAM NEGERI(PDN) ANGGARAN PDN"
+            tkdn_col = "TKDN(%) Unnamed: 14_level_1"
 
-            # merged_df[anggaran_sipd_col] = pd.to_numeric(merged_df[anggaran_sipd_col], errors='coerce')
-            # merged_df["TKDN(%)"] = pd.to_numeric(merged_df["TKDN(%)"], errors='coerce')
+            merged_df[anggaran_sipd_col] = pd.to_numeric(merged_df[anggaran_sipd_col], errors='coerce')
+            merged_df[tkdn_col] = pd.to_numeric(merged_df[tkdn_col], errors='coerce')
 
-            # merged_df[anggaran_sipd_col].fillna(0, inplace=True)
-            # merged_df["TKDN(%)"].fillna(0, inplace=True)
+            merged_df[anggaran_sipd_col].fillna(0, inplace=True)
+            merged_df[tkdn_col].fillna(0, inplace=True)
 
-            # # Jika TKDN > 0, salin nilai TKDN * nilai ANGGARAN SIPD ke ANGGARAN PDN
-            # merged_df.loc[merged_df['TKDN'] > 0, anggaran_pdn_col] = (
-            #     merged_df[anggaran_sipd_col] * merged_df["TKDN"] / 100
-            # )
+            # Jika TKDN > 0, salin nilai TKDN * nilai ANGGARAN SIPD ke ANGGARAN PDN
+            merged_df.loc[merged_df['TKDN'] > 0, anggaran_pdn_col] = (
+                merged_df[anggaran_sipd_col] * merged_df["TKDN"] / 100
+            )
 
             # Perbarui kolom TKDN(%) dengan nilai dari TKDN dari df_p3dn_ruptkdn
             # merged_df[tkdn_col] = merged_df["TKDN"]
