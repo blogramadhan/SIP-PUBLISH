@@ -7,6 +7,8 @@ import duckdb
 import openpyxl
 import io
 import xlsxwriter
+from openpyxl import load_workbook
+from openpyxl.utils.dataframe import dataframe_to_rows
 # Library Currency
 from babel.numbers import format_currency
 # Library AgGrid
@@ -130,16 +132,24 @@ with menu_p3dn_1:
             df_komitmen = pd.read_excel(upload_komitmen_p3dn, header=[0,1], dtype=str)
             
             # Kolom untuk kode urusan/program/kegiatan/subkegiatan
-            kode_col = ("KODE URUSAN/BIDANG URUSAN/PROGRAM KEG/SUBKEG", "Unnamed: 1_level_1")
+            kode_col = ('KODE URUSAN/BIDANG URUSAN/PROGRAM KEG/SUBKEG', 'Unnamed: 1_level_1')
 
             # Gabungkan semua kode di bawah header utama KODE AKUN di df_komitmen menjadi satu kolom
-            kode_akun_columns = [col for col in df_komitmen.columns if col[0] == "KODE AKUN"]
-            df_komitmen[("kode_akun_gabungan", "")] = (
+            kode_akun_columns = [col for col in df_komitmen.columns if col[0] == 'KODE AKUN']
+            df_komitmen[('kode_akun_gabungan', '')] = (
                 df_komitmen[kode_col].apply(lambda x: x[:8] + x[-9:] if len(x) == 28 else x) + "." +
-                df_komitmen[kode_akun_columns].astype(str).apply(lambda row: ".".join(row), axis=1)
+                df_komitmen[kode_akun_columns].astype(str).apply(lambda row: '.'.join(row), axis=1)
             )
 
+            # Flatten Multiindex header to single level for manipulation
+            df_komitmen.columns = [' '.join(col).strip() for col in df_komitmen.columns]
 
+            # Gabungkan data berdasarkan kode_akun_gabungan dari df_komitmen dan sub_kegiatan_akun dari Realisasi Olahan
+            merged_df = df_komitmen.merge(
+                df_p3dn_ruptkdn[["sub_kegiatan_akun", "status_pdn", "TKDN"]],
+                left_on="kode_akun_gabungan",
+                right_on="sub_kegiatan_akun"
+            )
 
             st.write(df_realisasi_p3dn.shape)
             st.write(df_p3dn_ruptkdn_filter.shape)
@@ -153,6 +163,10 @@ with menu_p3dn_1:
                 mime = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             )        
 
+            st.write(df_komitmen.shape)
+            st.write(merged_df.shape)
+
+            st.dataframe(merged_df.head(10))
 
         except Exception as e:
             
