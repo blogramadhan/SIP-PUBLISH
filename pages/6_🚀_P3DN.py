@@ -169,7 +169,7 @@ with menu_p3dn_1:
             )
 
             # Perbarui kolom TKDN(%) dengan nilai dari TKDN dari df_p3dn_ruptkdn
-            # merged_df[tkdn_col] = merged_df["TKDN"]
+            merged_df[tkdn_col] = merged_df["TKDN"]
 
             st.write(df_realisasi_p3dn.shape)
             st.write(df_p3dn_ruptkdn_filter.shape)
