@@ -87,6 +87,11 @@ with menu_p3dn_1:
 
     st.subheader("Unggah Template Excel Realisasi dan Komitmen P3DN")
 
+    bulans = ["Januari", "Februari", "Maret", "April", "Mei", "Juni"
+              "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
+    bulans = np.insert(bulans, 0, "Akumulasi")
+    bulan = st.selectbox("Pilih Bulan :", bulans)
+
     upload_realisasi_p3dn = st.file_uploader("Unggah file Excel Realisasi P3DN", type=["xlsx"])
     upload_komitmen_p3dn = st.file_uploader("Unggah file Excel Komitmen P3DN", type=["xlsx"])
 
