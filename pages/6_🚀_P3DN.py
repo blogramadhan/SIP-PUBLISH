@@ -65,13 +65,6 @@ con = duckdb.connect(database=':memory:')
 # duckdb.sql("INSTALL httpfs")
 # duckdb.sql("LOAD httpfs")
 
-# Dataset P3DN
-DatasetKamusTKDN = "https://data.pbj.my.id/p3dn/KamusTKDN.xlsx"
-DatasetRealisasi = "https://data.pbj.my.id/p3dn/Realisasi.xlsx"
-DatasetPenunjang = "https://data.pbj.my.id/p3dn/kode_penunjang.xlsx"
-DatasetRUPPaketPenyediaTerumumkan = "https://data.pbj.my.id/D197/sirup/RUP-PaketPenyedia-Terumumkan2024.parquet"
-DatasetRUPPaketAnggaranPenyedia = "https://data.pbj.my.id/D197/sirup/RUP-PaketAnggaranPenyedia2024.parquet"
-
 #####
 # Presentasi P3DN
 #####
@@ -91,6 +84,14 @@ with menu_p3dn_1:
               "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
     bulans = np.insert(bulans, 0, "Akumulasi")
     bulan = st.selectbox("Pilih Bulan :", bulans)
+
+    # Dataset P3DN
+    DatasetKamusTKDN = "https://data.pbj.my.id/p3dn/KamusTKDN.xlsx"
+    DatasetRealisasi = f"https://data.pbj.my.id/p3dn/Realisasi_{bulan}.xlsx"
+    DatasetPenunjang = "https://data.pbj.my.id/p3dn/kode_penunjang.xlsx"
+    DatasetRUPPaketPenyediaTerumumkan = "https://data.pbj.my.id/D197/sirup/RUP-PaketPenyedia-Terumumkan2024.parquet"
+    DatasetRUPPaketAnggaranPenyedia = "https://data.pbj.my.id/D197/sirup/RUP-PaketAnggaranPenyedia2024.parquet"
+
 
     upload_realisasi_p3dn = st.file_uploader("Unggah file Excel Realisasi P3DN", type=["xlsx"])
     upload_komitmen_p3dn = st.file_uploader("Unggah file Excel Komitmen P3DN", type=["xlsx"])
