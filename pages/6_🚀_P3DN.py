@@ -68,6 +68,7 @@ con = duckdb.connect(database=':memory:')
 # Dataset P3DN
 DatasetKamusTKDN = "https://data.pbj.my.id/p3dn/KamusTKDN.xlsx"
 DatasetRealisasi = "https://data.pbj.my.id/p3dn/Realisasi.xlsx"
+DatasetPenunjang = "https://data.pbj.my.id/p3dn/kode_penunjang.xlsx"
 DatasetRUPPaketPenyediaTerumumkan = "https://data.pbj.my.id/D197/sirup/RUP-PaketPenyedia-Terumumkan2024.parquet"
 DatasetRUPPaketAnggaranPenyedia = "https://data.pbj.my.id/D197/sirup/RUP-PaketAnggaranPenyedia2024.parquet"
 
@@ -95,11 +96,36 @@ with menu_p3dn_1:
 
             baca_tkdn = tarik_data_excel(DatasetKamusTKDN)
             baca_realisasi = tarik_data_excel(DatasetRealisasi)
+            baca_penunjang = tarik_data_excel(DatasetPenunjang)
             baca_RUPPaketPenyediaTerumumkan = tarik_data_parquet(DatasetRUPPaketPenyediaTerumumkan)
             baca_RUPPaketAnggaranPenyedia = tarik_data_parquet(DatasetRUPPaketAnggaranPenyedia)
 
             ### Realisasi
             baca_realisasi_p3dn = tarik_data_excel(upload_realisasi_p3dn) 
+
+            ### Betulkan "Kode Program" jika "Nama Program" contains "PROGRAM PENUNJANG"
+            # Filter data dari tabel baca_realisasi_p3dn berdasarkan kata "PROGRAM PENUNJANG" (case-insensitive)
+            filter_penunjang = baca_realisasi_p3dn["Nama Program"].str.contains("PROGRAM PENUNJANG", case=False, na=False)
+
+            # Gabungkan kedua tabel (baca_realisasi_p3dn dan baca_penunjang) berdasarkan "Nama Sub SKPD"
+            gabungan = baca_realisasi_p3dn.merge(baca_penunjang, on="Nama Sub SKPD", suffixes=("_tabel1", "_tabel2"))
+
+            # Perbarui kolom "Kode Program" di tabel baca_realisasi_p3dn hanya untuk baris yang memenuhi syarat
+            baca_realisasi_p3dn.loc[filter_penunjang, "Kode Program"] = gabungan.loc[
+                filter_penunjang, "Kode Program_tabel2"
+            ].values
+
+            # Perbarui kolom "Kode Kegiatan" hanya untuk baris yang memenuhi syarat
+            baca_realisasi_p3dn.loc[filter_penunjang, "Kode Kegiatan"] = baca_realisasi_p3dn.loc[filter_penunjang, "Kode Program"] + "." + baca_realisasi_p3dn.loc[
+                filter_penunjang, "Kode Kegiatan"
+            ].str.split(".", n=3).str[3]
+
+            # Perbarui kolom "Kode Sub Kegiatan" hanya untuk baris yang memenuhi syarat
+            baca_realisasi_p3dn.loc[filter_penunjang, "Kode Sub Kegiatan"] = baca_realisasi_p3dn.loc[filter_penunjang, "Kode Program"] + "." + baca_realisasi_p3dn.loc[
+                filter_penunjang, "Kode Sub Kegiatan"
+            ].str.split(".", n=3).str[3]
+            ###
+
             df_realisasi_p3dn = pd.merge(baca_realisasi_p3dn, baca_tkdn, left_on="Kode Akun", right_on="kode_akun", how="left")
             df_realisasi_p3dn["TKDN"] = df_realisasi_p3dn["tkdn"]
             df_realisasi_p3dn = df_realisasi_p3dn.drop(["kode_akun", "nama_akun", "tkdn"], axis=1)
