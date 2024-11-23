@@ -83,7 +83,7 @@ with menu_p3dn_1:
     bulans = ["Januari", "Februari", "Maret", "April", "Mei", "Juni"
               "Juli", "Agustus", "September", "Oktober", "November", "Desember"]
     bulans = np.insert(bulans, 0, "Akumulasi")
-    bulan = st.selectbox("Pilih Bulan :", bulans)
+    bulan = st.sidebar.selectbox("Pilih Bulan :", bulans)
 
     # Dataset P3DN
     DatasetKamusTKDN = "https://data.pbj.my.id/p3dn/KamusTKDN.xlsx"
