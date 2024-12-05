@@ -151,7 +151,7 @@ with menu_p3dn_1:
             proporsi = con.execute(proporsi_sql).df()
             baca_realisasi["sub_kegiatan_akun"] = baca_realisasi["Kode Gabungan"].apply(lambda x: x[:22]) 
             baca_realisasi["total_realisasi"] = baca_realisasi["Total Realisasi"]
-            baca_realisasi_filter = baca_realisasi[["sub_kegiatan_akun", "total_realisasi"]].drop_duplicates(subset=["cobe"])
+            baca_realisasi_filter = baca_realisasi[["sub_kegiatan_akun", "total_realisasi"]].drop_duplicates(subset=["sub_kegiatan_akun"])
 
             df_proporsi = pd.merge(proporsi, baca_realisasi_filter, left_on="sub_kegiatan_akun", right_on="sub_kegiatan_akun", how="left")
             df_proporsi_ok = con.execute(f"SELECT sub_kegiatan_akun, anggaran_belanja, total_realisasi, total_realisasi / NULLIF(anggaran_belanja, 0) AS proporsi FROM df_proporsi").df()
