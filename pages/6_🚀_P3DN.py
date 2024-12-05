@@ -149,7 +149,8 @@ with menu_p3dn_1:
 
             proporsi_sql = f'SELECT sub_kegiatan_akun, SUM(CAST("Anggaran Belanja" AS BIGINT)) AS anggaran_belanja FROM df_p3dn_ruptkdn GROUP BY sub_kegiatan_akun'
             proporsi = con.execute(proporsi_sql).df()
-            baca_realisasi["sub_kegiatan_akun"] = baca_realisasi["Kode Gabungan"].apply(lambda x: x[:22]) 
+            # baca_realisasi["sub_kegiatan_akun"] = baca_realisasi["Kode Gabungan"].apply(lambda x: x[:22]) 
+            baca_realisasi["sub_kegiatan_akun"] = baca_realisasi["Kode Sub Kegiatan"] + "." + baca_realisasi["Kode Akun"]
             baca_realisasi["total_realisasi"] = baca_realisasi["Total Realisasi"]
             baca_realisasi_filter = baca_realisasi[["sub_kegiatan_akun", "total_realisasi"]].drop_duplicates(subset=["sub_kegiatan_akun"])
 
