@@ -47,7 +47,7 @@ region_config = {
 }
 
 daerah = list(region_config.keys())
-tahuns = ["2024", "2023", "2022"]
+tahuns = ["2025", "2024", "2023"]
 
 pilih = st.sidebar.selectbox("Pilih UKPBJ :", daerah)
 tahun = st.sidebar.selectbox("Pilih Tahun :", tahuns)
