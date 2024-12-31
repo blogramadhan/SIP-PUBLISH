@@ -1,5 +1,3 @@
-# "KAB. TANGGERANG": {"folder": "tgr", "RUP": "D50", "LPSE": "333"},
-# "KAB. KATINGAN": {"folder": "ktg", "RUP": "D236", "LPSE": "438"}
 # Library Utama
 import streamlit as st
 import pandas as pd
@@ -43,7 +41,9 @@ region_config = {
     "KAB. MELAWI": {"folder": "mlw", "RUP": "D210", "LPSE": "540"},
     "KAB. SINTANG": {"folder": "stg", "RUP": "D211", "LPSE": "345"},
     "KAB. KAPUAS HULU": {"folder": "kph", "RUP": "D209", "LPSE": "488"},
-    "KAB. KETAPANG": {"folder": "ktp", "RUP": "D201", "LPSE": "110"}
+    "KAB. KETAPANG": {"folder": "ktp", "RUP": "D201", "LPSE": "110"},
+    "KAB. TANGGERANG": {"folder": "tgr", "RUP": "D50", "LPSE": "333"},
+    "KAB. KATINGAN": {"folder": "ktg", "RUP": "D236", "LPSE": "438"}
 }
 
 daerah = list(region_config.keys())
