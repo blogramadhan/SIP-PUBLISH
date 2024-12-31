@@ -1,3 +1,6 @@
+# "KAB. TANGGERANG": {"folder": "tgr", "RUP": "D50", "LPSE": "333"},
+# "KAB. KATINGAN": {"folder": "ktg", "RUP": "D236", "LPSE": "438"}
+
 # Library Utama
 import pandas as pd
 import numpy as np
@@ -42,8 +45,6 @@ region_config = {
     "KAB. SINTANG": {"folder": "stg", "RUP": "D211", "LPSE": "345"},
     "KAB. KAPUAS HULU": {"folder": "kph", "RUP": "D209", "LPSE": "488"},
     "KAB. KETAPANG": {"folder": "ktp", "RUP": "D201", "LPSE": "110"},
-    "KAB. TANGGERANG": {"folder": "tgr", "RUP": "D50", "LPSE": "333"},
-    "KAB. KATINGAN": {"folder": "ktg", "RUP": "D236", "LPSE": "438"}
 }
 
 daerah = list(region_config.keys())
