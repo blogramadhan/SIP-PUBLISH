@@ -69,16 +69,16 @@ with st.container(border=True):
             """
             )
 
-        with st.container(border=True):
-            st.subheader("MONITORING")
-            st.markdown(
-            """
-            * ITKP
-            * SIKAP
-                * Tender
-                * Non Tender
-            """
-            )
+        # with st.container(border=True):
+        #     st.subheader("MONITORING")
+        #     st.markdown(
+        #     """
+        #     * ITKP
+        #     * SIKAP
+        #         * Tender
+        #         * Non Tender
+        #     """
+        #     )
 
     with col_menu_2:
 
