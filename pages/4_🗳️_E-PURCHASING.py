@@ -65,11 +65,11 @@ con = duckdb.connect(database=':memory:')
 
 ## Akses Dataset (Parquet)
 ### Dataset Katalog dan Toko Daring
-DatasetPURCHASINGECAT = f"https://data.pbj.my.id/{kodeRUP}/epurchasing/Ecat-PaketEPurchasing{tahun}.parquet"
-DatasetPURCHASINGBELA = f"https://data.pbj.my.id/{kodeRUP}/epurchasing/Bela-TokoDaringRealisasi{tahun}.parquet"
-DatasetPURCHASINGECATKD = f"https://data.pbj.my.id/{kodeRUP}/epurchasing/ECATKomoditasDetail{tahun}.parquet"
-DatasetPURCHASINGECATIS = f"https://data.pbj.my.id/{kodeRUP}/epurchasing/Ecat-InstansiSatker.parquet"
-DatasetPURCHASINGECATPD = f"https://data.pbj.my.id/{kodeRUP}/epurchasing/ECATPenyediaDetail{tahun}.parquet"
+DatasetPURCHASINGECAT = f"https://data.pbj.my.id/{kodeRUP}/epurchasing/Ecat-PaketEPurchasing{tahun}.xlsx"
+DatasetPURCHASINGBELA = f"https://data.pbj.my.id/{kodeRUP}/epurchasing/Bela-TokoDaringRealisasi{tahun}.xlsx"
+DatasetPURCHASINGECATKD = f"https://data.pbj.my.id/{kodeRUP}/epurchasing/ECATKomoditasDetail{tahun}.xlsx"
+DatasetPURCHASINGECATIS = f"https://data.pbj.my.id/{kodeRUP}/epurchasing/Ecat-InstansiSatker.xlsx"
+DatasetPURCHASINGECATPD = f"https://data.pbj.my.id/{kodeRUP}/epurchasing/ECATPenyediaDetail{tahun}.xlsx"
 
 #####
 # Presentasi Katalog dan Toko Daring
@@ -85,10 +85,10 @@ with menu_purchasing_1:
 
     try:
         ### Baca file parquet E-Katalog
-        df_ECAT = tarik_data_parquet(DatasetPURCHASINGECAT)
-        df_ECAT_KD = tarik_data_parquet(DatasetPURCHASINGECATKD)
-        df_ECAT_IS = tarik_data_parquet(DatasetPURCHASINGECATIS)
-        df_ECAT_PD = tarik_data_parquet(DatasetPURCHASINGECATPD)
+        df_ECAT = tarik_data_excel(DatasetPURCHASINGECAT)
+        df_ECAT_KD = tarik_data_excel(DatasetPURCHASINGECATKD)
+        df_ECAT_IS = tarik_data_excel(DatasetPURCHASINGECATIS)
+        df_ECAT_PD = tarik_data_excel(DatasetPURCHASINGECATPD)
 
         ### Query E-Katalog
         df_ECAT_0 = df_ECAT.merge(df_ECAT_KD, how='left', on='kd_komoditas').drop('nama_satker', axis=1)
