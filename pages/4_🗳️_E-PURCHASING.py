@@ -87,7 +87,7 @@ with menu_purchasing_1:
         ### Baca file parquet E-Katalog
         df_ECAT = tarik_data_parquet(DatasetPURCHASINGECAT)
         df_ECAT_KD = tarik_data_parquet(DatasetPURCHASINGECATKD)
-        # df_ECAT_IS = tarik_data_excel(DatasetPURCHASINGECATIS)
+        df_ECAT_IS = tarik_data_excel(DatasetPURCHASINGECATIS)
         # df_ECAT_PD = tarik_data_excel(DatasetPURCHASINGECATPD)
 
         # ### Query E-Katalog
