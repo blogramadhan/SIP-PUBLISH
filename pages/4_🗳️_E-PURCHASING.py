@@ -87,13 +87,13 @@ with menu_purchasing_1:
         ### Baca file parquet E-Katalog
         df_ECAT = tarik_data_parquet(DatasetPURCHASINGECAT)
         df_ECAT_KD = tarik_data_parquet(DatasetPURCHASINGECATKD)
-        # df_ECAT_IS = tarik_data_excel(DatasetPURCHASINGECATIS)
-        # df_ECAT_PD = tarik_data_excel(DatasetPURCHASINGECATPD)
+        df_ECAT_IS = tarik_data_excel(DatasetPURCHASINGECATIS)
+        df_ECAT_PD = tarik_data_excel(DatasetPURCHASINGECATPD)
 
-        # ### Query E-Katalog
-        # df_ECAT_0 = df_ECAT.merge(df_ECAT_KD, how='left', on='kd_komoditas').drop('nama_satker', axis=1)
-        # df_ECAT_1 = pd.merge(df_ECAT_0, df_ECAT_IS, left_on='satker_id', right_on='kd_satker', how='left')
-        # df_ECAT_OK = df_ECAT_1.merge(df_ECAT_PD, how='left', on='kd_penyedia')
+        ### Query E-Katalog
+        df_ECAT_0 = df_ECAT.merge(df_ECAT_KD, how='left', on='kd_komoditas').drop('nama_satker', axis=1)
+        df_ECAT_1 = pd.merge(df_ECAT_0, df_ECAT_IS, left_on='satker_id', right_on='kd_satker', how='left')
+        df_ECAT_OK = df_ECAT_1.merge(df_ECAT_PD, how='left', on='kd_penyedia')
 
         # ### Buat tombol unduh dataset
         # unduh_ECAT_excel = download_excel(df_ECAT_OK)
