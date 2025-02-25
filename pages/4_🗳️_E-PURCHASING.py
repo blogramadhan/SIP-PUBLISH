@@ -87,8 +87,8 @@ with menu_purchasing_1:
         ### Baca file parquet E-Katalog
         df_ECAT = tarik_data_parquet(DatasetPURCHASINGECAT)
         df_ECAT_KD = tarik_data_parquet(DatasetPURCHASINGECATKD)
-        df_ECAT_IS = tarik_data_excel(DatasetPURCHASINGECATIS)
-        df_ECAT_PD = tarik_data_excel(DatasetPURCHASINGECATPD)
+        df_ECAT_IS = tarik_data_parquet(DatasetPURCHASINGECATIS)
+        df_ECAT_PD = tarik_data_parquet(DatasetPURCHASINGECATPD)
 
         ### Query E-Katalog
         df_ECAT_0 = df_ECAT.merge(df_ECAT_KD, how='left', on='kd_komoditas').drop('nama_satker', axis=1)
